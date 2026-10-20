@@ -1,0 +1,8 @@
+{
+  "name": "liftspark-backend",
+  "private": true,
+  "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "scripts": { "typecheck": "tsc --noEmit" },
+  "devDependencies": { "typescript": "^5.6.3", "@types/node": "^22.10.0" }
+}

@@ -1,0 +1,195 @@
+/* Liftspark design system — loaded after index.css and overriding its tokens.
+ *
+ * Direction: "night session". A deep ink-blue base (not black), warm chalk text, and one spark:
+ * an ember-to-magenta gradient used only for the primary action, live heart rate and strain.
+ * Athletic condensed type (Barlow Condensed) carries every number and title; Barlow sets the body.
+ * Heart-rate zones have their own fixed scale so they read the same on every screen.
+ */
+
+:root {
+  --bg:        #0b0d1a;
+  --bg-el:     #10132a;
+  --surface:   #161a33;
+  --surface-2: #1f2443;
+  --surface-3: #282e52;
+  --label:     #f3f0e8;
+  --label-2:   rgba(243,240,232,.66);
+  --label-3:   rgba(243,240,232,.42);
+  --sep:       rgba(170,180,230,.16);
+  --sep-op:    rgba(170,180,230,.12);
+
+  --spark:   #ff6a2b;
+  --spark-2: #ff2f7d;
+  --gold:    #ffc23d;
+  --spark-grad: linear-gradient(135deg, var(--spark) 0%, var(--spark-2) 100%);
+  --green: #3ddc97; --red: #ff4d5e; --blue: #5b8cff; --orange: #ff9d3d; --yellow: #ffd34d;
+
+  /* HR zones 1–5 (cool to hot) */
+  --z1: #5b8cff; --z2: #3ddc97; --z3: #ffd34d; --z4: #ff9d3d; --z5: #ff3d6e;
+
+  --acc: var(--spark);
+  --acc-2: #e04e14;
+  --on-acc: #160a05;
+
+  --r-sm: 10px; --r: 14px; --r-lg: 20px; --r-xl: 26px; --r-card: 18px;
+  --ease: cubic-bezier(.22,1,.36,1);
+  --fast: 150ms; --med: 240ms;
+
+  --font-body: 'Barlow', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-display: 'Barlow Condensed', 'Barlow', -apple-system, system-ui, sans-serif;
+}
+
+:root[data-theme="light"] {
+  --bg:        #f4f1ea;
+  --bg-el:     #f8f6f1;
+  --surface:   #ffffff;
+  --surface-2: #ece8de;
+  --surface-3: #e2ddd0;
+  --label:     #14172b;
+  --label-2:   rgba(20,23,43,.68);
+  --label-3:   rgba(20,23,43,.46);
+  --sep:       rgba(20,23,43,.14);
+  --sep-op:    rgba(20,23,43,.10);
+  --spark:   #e8521a;
+  --spark-2: #e01e66;
+  --acc: var(--spark);
+  --acc-2: #b93d0e;
+  --on-acc: #ffffff;
+}
+
+/* The default accent is the spark; the other presets stay available in Settings. */
+:root[data-accent="spark"] { --acc: var(--spark); --acc-2: #e04e14; --on-acc: #160a05 }
+:root[data-theme="light"][data-accent="spark"] { --on-acc: #ffffff }
+
+html, body { font-family: var(--font-body); background: var(--bg); }
+body { -webkit-font-smoothing: antialiased; font-feature-settings: "tnum" 1, "lnum" 1; }
+
+/* Titles: condensed, tall, tight. The type is the brand. */
+.hdr h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 40px;
+  letter-spacing: -.01em;
+  line-height: .98;
+}
+@media (max-width:420px) { .hdr h1 { font-size: 36px } }
+h2, h3, .sec-h, .card-h, .sheet-title, .modal-title {
+  font-family: var(--font-display);
+  letter-spacing: .005em;
+}
+
+/* Numbers anywhere they matter (sets, weights, timers, stats) use the condensed face. */
+.stp .num, .num, .big, .stat-v, .kpi, .rest-t, .elapsed, .timer, .hm-v, .pr-v, .val {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Cards: soft-edged slabs with a hairline top light instead of drop shadows. */
+.card, .group, .lgroup, .cardx {
+  border-radius: var(--r-card);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+:root[data-theme="light"] .card, :root[data-theme="light"] .group, :root[data-theme="light"] .lgroup {
+  box-shadow: 0 1px 0 rgba(20,23,43,.04), 0 6px 18px -12px rgba(20,23,43,.25);
+}
+
+/* Primary action: the spark gradient, a pill, slight press-in. Only one per screen. */
+.btn.primary, .btn.pri, .btn-pri, button.pri, .cta {
+  background: var(--spark-grad);
+  color: #fff;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: .02em;
+  transition: transform var(--fast) var(--ease), filter var(--fast);
+}
+.btn.primary:active, .btn.pri:active, .btn-pri:active, button.pri:active, .cta:active { transform: scale(.97); filter: brightness(.95) }
+
+/* Tab bar: floating glass dock with a spark-lit active item. */
+#tabbar {
+  background: rgba(16,19,42,.82);
+  backdrop-filter: saturate(160%) blur(22px);
+  -webkit-backdrop-filter: saturate(160%) blur(22px);
+  border-top: 1px solid var(--sep-op);
+}
+:root[data-theme="light"] #tabbar { background: rgba(248,246,241,.9) }
+#tabbar button.on { color: var(--spark) }
+#tabbar button.start .cir { background: var(--spark-grad); color: #fff; box-shadow: 0 8px 22px -8px rgba(255,80,60,.65) }
+
+/* Segmented controls and chips pick up the ink surfaces. */
+.seg { background: var(--surface-2) }
+.seg-sel { background: var(--surface-3) }
+:root[data-theme="light"] .seg-sel { background: #fff }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: 0ms !important; animation-duration: 0ms !important; }
+}
+
+/* ---------- Liftspark-only components ---------- */
+
+.ls-card {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  padding: 16px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+.ls-row { display: flex; align-items: center; gap: 12px }
+.ls-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
+.ls-grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px }
+.ls-k { font-size: 13px; color: var(--label-2); font-weight: 500 }
+.ls-v { font-family: var(--font-display); font-weight: 700; font-size: 30px; line-height: 1; font-variant-numeric: tabular-nums }
+.ls-v small { font-size: 15px; font-weight: 600; color: var(--label-2); margin-inline-start: 3px }
+.ls-sub { font-size: 13px; color: var(--label-3) }
+.ls-h { font-family: var(--font-display); font-weight: 700; font-size: 22px; margin: 22px 2px 10px }
+.ls-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 46px; padding: 0 18px; border-radius: 999px;
+  background: var(--surface-2); color: var(--label); font-weight: 600; font-size: 15px;
+}
+.ls-btn.pri { background: var(--spark-grad); color: #fff; font-family: var(--font-display); font-size: 18px; font-weight: 700 }
+.ls-btn.full { width: 100% }
+.ls-btn:disabled { opacity: .45 }
+.ls-input {
+  width: 100%; min-height: 46px; padding: 0 14px; border-radius: var(--r);
+  background: var(--surface-2); border: 1px solid transparent; font-size: 16px;
+}
+.ls-input:focus { outline: none; border-color: var(--spark) }
+.ls-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); font-size: 12px; font-weight: 600 }
+.ls-spark-text { background: var(--spark-grad); -webkit-background-clip: text; background-clip: text; color: transparent }
+.ls-list { display: flex; flex-direction: column }
+.ls-li { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--sep-op) }
+.ls-li:last-child { border-bottom: 0 }
+.ls-note { font-size: 13px; color: var(--label-2); line-height: 1.45 }
+
+/* Live heart-rate dock during a workout */
+.hr-dock {
+  display: flex; align-items: center; gap: 14px; padding: 12px 16px; margin: 0 0 12px;
+  border-radius: var(--r-lg); background: var(--surface);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+.hr-dock .bpm { font-family: var(--font-display); font-weight: 800; font-size: 40px; line-height: 1; font-variant-numeric: tabular-nums }
+.hr-dock .heart { width: 26px; height: 26px; color: var(--z5); animation: ls-beat 1s var(--ease) infinite }
+.hr-dock .zone { font-weight: 700; font-size: 13px; padding: 3px 9px; border-radius: 999px; color: #0b0d1a }
+.hr-zbar { display: flex; height: 8px; border-radius: 99px; overflow: hidden; gap: 2px; flex: 1 }
+.hr-zbar span { display: block; height: 100% }
+@keyframes ls-beat { 0%,100% { transform: scale(1) } 15% { transform: scale(1.18) } 30% { transform: scale(1) } }
+
+/* Ring (calories, strain) */
+.ls-ring { position: relative; width: 132px; height: 132px; flex: none }
+.ls-ring svg { width: 100%; height: 100%; transform: rotate(-90deg) }
+.ls-ring .c { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center }
+
+/* Onboarding */
+.ls-onboard { display: flex; flex-direction: column; justify-content: center; min-height: 82vh; padding-top: 24px }
+.ls-onboard-mark { display: flex; filter: drop-shadow(0 14px 28px rgba(255,70,70,.35)) }
+.ls-onboard-title { font-family: var(--font-display); font-weight: 800; font-size: 56px; line-height: .95; margin: 18px 0 8px; letter-spacing: -.01em }
+.ls-onboard-sub { color: var(--label-2); font-size: 17px; line-height: 1.45; margin: 0 0 24px; max-width: 34ch }
+.ls-onboard-list { list-style: none; padding: 0; margin: 0 0 28px; display: grid; gap: 14px }
+.ls-onboard-list li { display: grid; gap: 2px; padding-inline-start: 16px; border-inline-start: 3px solid var(--spark) }
+.ls-onboard-list b { font-family: var(--font-display); font-size: 19px; font-weight: 700 }
+.ls-onboard-list span { color: var(--label-2); font-size: 14px; line-height: 1.4 }
+
+/* openGym's pill buttons and accent fills pick up the spark too. */
+.btn.primary.pill { font-size: 16px }
+.btn.primary:disabled { opacity: .45; filter: none }

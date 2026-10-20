@@ -1,0 +1,9 @@
+{
+  "appId": "com.akkikens.liftspark",
+  "appName": "Liftspark",
+  "webDir": "dist",
+  "backgroundColor": "#0b0d1a",
+  "ios": {
+    "contentInset": "never"
+  }
+}
