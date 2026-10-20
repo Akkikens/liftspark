@@ -14,6 +14,7 @@ import { webAuth } from './ls-native.js'
 
 export const BACKEND = (import.meta.env?.VITE_LS_BACKEND || 'https://liftspark-api.vercel.app').replace(/\/$/, '')
 export const PROVIDERS = ['strava', 'whoop', 'oura']
+const FEATURES = [...PROVIDERS, 'fdc']
 const KEY = p => `liftspark.oauth.${p}`
 
 let configP = null
@@ -24,10 +25,10 @@ export function backendConfig(fetchImpl = globalThis.fetch) {
       const r = await fetchImpl(BACKEND + '/api/config', { headers: { Accept: 'application/json' } })
       if (!r.ok) throw new Error(String(r.status))
       const j = await r.json()
-      return Object.fromEntries(PROVIDERS.map(p => [p, j?.[p] === true]))
+      return Object.fromEntries(FEATURES.map(p => [p, j?.[p] === true]))
     } catch {
       configP = null   // try again next time
-      return Object.fromEntries(PROVIDERS.map(p => [p, false]))
+      return Object.fromEntries(FEATURES.map(p => [p, false]))
     }
   })())
 }

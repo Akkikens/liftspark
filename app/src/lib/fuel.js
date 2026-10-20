@@ -124,3 +124,100 @@ export function recentFoods(S, limit = 12) {
   }
   return out
 }
+
+// ── Food depth: USDA generic foods, barcode cache, favourites, saved meals, copy, adaptive TDEE ──
+
+/** A USDA FoodData Central food (Foundation / SR Legacy, values per 100 g) → our food shape. */
+export function fromFDC(f) {
+  if (!f?.description) return null
+  const n = num => (f.foodNutrients || []).find(x => String(x.nutrientNumber) === num || x.nutrientId === Number(num))?.value
+  const kcal = n('208') ?? n('1008') ?? (n('268') != null ? n('268') / 4.184 : null)
+  if (!(kcal >= 0)) return null
+  const name = String(f.description).toLowerCase().replace(/(^|,\s*)(\w)/g, (m, a, b) => a + b.toUpperCase())
+  return { code: null, fdcId: f.fdcId, name, brand: 'USDA', per100: { kcal: Math.round(kcal), p: r1(n('203') ?? n('1003')), c: r1(n('205') ?? n('1005')), f: r1(n('204') ?? n('1004')) }, serving: null, servingLabel: null }
+}
+
+/** Generic foods through Liftspark's backend (it holds the FDC key); [] when not configured. */
+export async function searchGeneric(query, backend, fetchImpl = globalThis.fetch) {
+  const q = String(query || '').trim()
+  if (q.length < 2 || !backend) return []
+  try {
+    const r = await fetchImpl(`${backend}/api/fdc/search?q=${encodeURIComponent(q)}`)
+    if (!r.ok) return []
+    const j = await r.json()
+    return (j.foods || []).map(fromFDC).filter(Boolean).slice(0, 8)
+  } catch { return [] }
+}
+
+/** A barcode answered before is answered from the state, offline and instantly. */
+export async function foodByBarcodeCached(S, code, fetchImpl) {
+  const c = String(code || '').replace(/\D/g, '')
+  const hit = S?.foodCache?.[c]
+  if (hit) return { food: hit, cached: true }
+  return { food: await foodByBarcode(c, fetchImpl), cached: false }
+}
+export function cacheBarcode(S, food, max = 300) {
+  if (!food?.code) return
+  S.foodCache = { ...(S.foodCache || {}), [food.code]: food }
+  const keys = Object.keys(S.foodCache)
+  if (keys.length > max) for (const k of keys.slice(0, keys.length - max)) delete S.foodCache[k]
+}
+
+const favKey = e => (e.code || e.fdcId || e.name || '').toString().toLowerCase()
+export const isFavourite = (S, e) => (S?.foodFavs || []).some(f => f.key === favKey(e))
+/** Toggles a favourite: an entry (fixed amount) or a food (per 100 g). */
+export function toggleFavourite(S, e) {
+  const k = favKey(e)
+  const list = S.foodFavs || []
+  S.foodFavs = list.some(f => f.key === k) ? list.filter(f => f.key !== k) : [...list, { key: k, item: { ...e, id: undefined, t: undefined } }]
+}
+
+/** A meal's entries saved under a name, to log again in one tap. */
+export function saveMeal(S, name, entries) {
+  const items = entries.map(({ id, t, meal, ...rest }) => rest)
+  S.savedMeals = [...(S.savedMeals || []), { id: Date.now().toString(36), name: String(name || 'Meal').slice(0, 40), items }]
+}
+export function logSavedMeal(S, day, meal, saved, now = Date.now()) {
+  const made = saved.items.map((it, i) => ({ ...it, id: `${now.toString(36)}m${i}`, meal, t: now + i }))
+  for (const e of made) addFood(S, day, e)
+  return made
+}
+
+/** Copies a day's entries (or one meal's) onto another day; returns the new entries. */
+export function copyDay(S, from, to, meal = null, now = Date.now()) {
+  const made = dayFood(S, from).filter(e => !meal || e.meal === meal).map((e, i) => ({ ...e, id: `${now.toString(36)}c${i}`, t: now + i }))
+  for (const e of made) addFood(S, to, e)
+  return made
+}
+
+export function mealTotals(entries, meal) { return totals(entries.filter(e => e.meal === meal)) }
+
+/**
+ * Adaptive TDEE, MacroFactor-style: over the last `days` days, what you ate on logged days minus the
+ * energy your weight change accounts for (7,700 kcal per kg). Needs 10+ logged days and weigh-ins
+ * at least 10 days apart. Returns { tdee, intake, kgPerWeek, loggedDays } or null.
+ */
+export function adaptiveTdee(S, { days = 28, now = Date.now(), kgOf = w => (S.unit === 'lb' ? w / 2.2046226218 : w) } = {}) {
+  const from = new Date(now - days * 864e5).toISOString().slice(0, 10)
+  const logged = Object.entries(S?.food || {}).filter(([d, list]) => d >= from && list.length && totals(list).kcal >= 800)
+  if (logged.length < 10) return null
+  const weights = (S.bodyweight || []).filter(b => b.d >= from && b.w > 0).sort((a, b) => (a.d < b.d ? -1 : 1))
+  if (weights.length < 2) return null
+  const span = (Date.parse(weights.at(-1).d) - Date.parse(weights[0].d)) / 864e5
+  if (span < 10) return null
+  // The weight trend as a least-squares slope (kg per day), so one heavy morning doesn't swing it.
+  const xs = weights.map(b => Date.parse(b.d) / 864e5), ys = weights.map(b => kgOf(b.w))
+  const mx = xs.reduce((a, b) => a + b, 0) / xs.length, my = ys.reduce((a, b) => a + b, 0) / ys.length
+  const slope = xs.reduce((a, x, i) => a + (x - mx) * (ys[i] - my), 0) / xs.reduce((a, x) => a + (x - mx) ** 2, 0)
+  const intake = logged.reduce((a, [, list]) => a + totals(list).kcal, 0) / logged.length
+  const tdee = Math.round((intake - slope * 7700) / 10) * 10
+  return { tdee, intake: Math.round(intake), kgPerWeek: Math.round(slope * 7 * 100) / 100, loggedDays: logged.length }
+}
+
+/** The weekly suggestion: a new daily goal when the adaptive TDEE moves the target by 100+ kcal. */
+export function goalSuggestion(S, currentGoal, opts) {
+  const a = adaptiveTdee(S, opts)
+  if (!a) return null
+  const target = Math.round((a.tdee + (OBJECTIVE[S.lsProfile?.objective] ?? 0)) / 10) * 10
+  return Math.abs(target - currentGoal) >= 100 ? { ...a, goal: target } : null
+}

@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useStore } from '../store/useStore.js'
 import { useUI } from '../store/useUI.js'
-import { t } from '../lib/i18n.js'
+import { t, tn } from '../lib/i18n.js'
 import { todayISO } from '../lib/format.js'
-import { MEALS, MEAL_NAMES, searchFoods, foodByBarcode, entryFor, quickEntry, dayFood, totals, dailyGoal, macroGoals, addFood, removeFood, recentFoods } from '../lib/fuel.js'
+import { MEALS, MEAL_NAMES, searchFoods, entryFor, quickEntry, dayFood, totals, dailyGoal, macroGoals, addFood, removeFood, recentFoods, searchGeneric, foodByBarcodeCached, cacheBarcode, isFavourite, toggleFavourite, saveMeal, logSavedMeal, copyDay, mealTotals, goalSuggestion } from '../lib/fuel.js'
+import { BACKEND, backendConfig } from '../lib/integrations.js'
 import { bodyweightKg } from '../lib/ls-workout.js'
 import { ageOf } from '../lib/strain.js'
 import { health } from '../lib/ls-native.js'
@@ -63,14 +64,26 @@ export default function Fuel() {
       <Macro k={t('Carbs')} v={tot.c} goal={macro.c} color="var(--z3)" />
       <Macro k={t('Fat')} v={tot.f} goal={macro.f} color="var(--z1)" />
     </div>
+    {isToday && <GoalSuggestion S={S} goal={goal} />}
+    {isToday && !entries.length && dayFood(S, shift(day, -1)).length > 0 && <button className="ls-btn full" style={{ marginTop: 10 }}
+      onClick={() => { let made = []; update(s => { made = copyDay(s, shift(day, -1), day) }); made.forEach(e => foodToHealth(e.id, e)); useUI.getState().toast(t('Copied yesterday')) }}>
+      <Icon name="copy" /> {t('Copy yesterday’s food')}</button>}
 
     {MEALS.map(meal => {
       const list = entries.filter(e => e.meal === meal)
-      const kcal = list.reduce((a, e) => a + e.kcal, 0)
+      const mt = mealTotals(entries, meal)
+      const yesterday = dayFood(S, shift(day, -1)).filter(e => e.meal === meal)
       return <div key={meal}>
-        <div className="ls-h ls-row" style={{ justifyContent: 'space-between' }}>
-          <span>{t(MEAL_NAMES[meal])}{kcal ? <span className="ls-sub" style={{ marginInlineStart: 8 }}>{kcal} kcal</span> : null}</span>
-          <button className="ls-btn" style={{ minHeight: 36 }} onClick={() => openAdd(meal)}><Icon name="plus" /> {t('Add')}</button>
+        <div className="ls-h ls-row" style={{ justifyContent: 'space-between', gap: 8 }}>
+          <span>{t(MEAL_NAMES[meal])}{mt.kcal ? <span className="ls-sub" style={{ marginInlineStart: 8 }}>{mt.kcal} kcal · P {Math.round(mt.p)} · C {Math.round(mt.c)} · F {Math.round(mt.f)}</span> : null}</span>
+          <span className="ls-row" style={{ gap: 6 }}>
+            {list.length > 1 && <button className="ls-btn" style={{ minHeight: 36 }} aria-label={t('Save {0} as a meal', t(MEAL_NAMES[meal]))} onClick={() => {
+              const name = window.prompt(t('Name this meal'), t(MEAL_NAMES[meal]))
+              if (name) { update(s => saveMeal(s, name, list)); useUI.getState().toast(t('Saved “{0}”', name)) }
+            }}><Icon name="star" /></button>}
+            {!list.length && yesterday.length > 0 && <button className="ls-btn" style={{ minHeight: 36 }} onClick={() => { let made = []; update(s => { made = copyDay(s, shift(day, -1), day, meal) }); made.forEach(e => foodToHealth(e.id, e)) }}><Icon name="copy" /> {t('Yesterday')}</button>}
+            <button className="ls-btn" style={{ minHeight: 36 }} onClick={() => openAdd(meal)}><Icon name="plus" /> {t('Add')}</button>
+          </span>
         </div>
         {list.length > 0 && <div className="ls-card ls-list" style={{ padding: '4px 16px' }}>
           {list.map(e => <div key={e.id} className="ls-li">
@@ -79,12 +92,30 @@ export default function Fuel() {
               <div className="ls-sub">{[e.brand, e.g ? e.g + ' g' : null, `P ${e.p} · C ${e.c} · F ${e.f}`].filter(Boolean).join(' · ')}</div>
             </div>
             <div className="ls-v" style={{ fontSize: 22 }}>{e.kcal}</div>
+            <button className="iconbtn" onClick={() => update(s => toggleFavourite(s, e))} aria-label={isFavourite(S, e) ? t('Remove {0} from favourites', e.name) : t('Add {0} to favourites', e.name)} aria-pressed={isFavourite(S, e)}><Icon name={isFavourite(S, e) ? 'starFill' : 'star'} /></button>
             <button className="iconbtn" onClick={() => del(e.id)} aria-label={t('Remove {0}', e.name)}><Icon name="trash" /></button>
           </div>)}
         </div>}
       </div>
     })}
-    <div className="ls-sub" style={{ margin: '24px 4px 120px' }}>{t('Food data from Open Food Facts (ODbL). Goal from your profile in Devices & Health.')}</div>
+    <div className="ls-sub" style={{ margin: '24px 4px 120px' }}>{t('Food data from Open Food Facts (ODbL) and USDA FoodData Central (public domain). Goal from your profile in Devices & Health. Estimates, not medical advice.')}</div>
+  </div>
+}
+
+// The weekly check-in: what your logged food and weight trend say you actually burn.
+function GoalSuggestion({ S, goal }) {
+  const update = useStore(s => s.update)
+  const sug = goalSuggestion(S, goal)
+  const week = Math.floor(Date.now() / (7 * 864e5))
+  if (!sug || S.lsGoalCheck === week) return null
+  return <div className="ls-card" style={{ marginTop: 10, borderInlineStart: '4px solid var(--spark)' }}>
+    <div className="ls-k">{t('Weekly check-in')}</div>
+    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20, margin: '2px 0 6px' }}>{t('Your burn looks like {0} kcal a day', sug.tdee.toLocaleString())}</div>
+    <div className="ls-note">{t('From {0} logged days and a weight trend of {1} kg a week. For your goal that makes {2} kcal a day instead of {3}.', sug.loggedDays, (sug.kgPerWeek > 0 ? '+' : '') + sug.kgPerWeek, sug.goal.toLocaleString(), goal.toLocaleString())}</div>
+    <div className="ls-row" style={{ gap: 8, marginTop: 10 }}>
+      <button className="ls-btn pri" style={{ flex: 1 }} onClick={() => update(s => { s.lsProfile = { ...(s.lsProfile || {}), goalKcal: sug.goal }; s.lsGoalCheck = week })}>{t('Use {0}', sug.goal.toLocaleString())}</button>
+      <button className="ls-btn" onClick={() => update(s => { s.lsGoalCheck = week })}>{t('Keep {0}', goal.toLocaleString())}</button>
+    </div>
   </div>
 }
 
@@ -106,20 +137,27 @@ function AddFood({ meal, day, close }) {
   const toast = useUI(s => s.toast)
   const [q, setQ] = useState('')
   const [results, setResults] = useState([])
+  const [generic, setGeneric] = useState([])
+  const [fdc, setFdc] = useState(false)
   const [busy, setBusy] = useState(false)
   const [picked, setPicked] = useState(null)
   const [grams, setGrams] = useState(100)
   const [quick, setQuick] = useState(false)
   const [qk, setQk] = useState({ name: '', kcal: '', p: '', c: '', f: '' })
   const recent = useMemo(() => recentFoods(S), [S.food])
+  const favs = S.foodFavs || []
+  const meals = S.savedMeals || []
   const tm = useRef(null)
+  useEffect(() => { backendConfig().then(c => setFdc(!!c.fdc)) }, [])
 
   useEffect(() => {
     clearTimeout(tm.current)
     if (q.trim().length < 2) { setResults([]); return }
     tm.current = setTimeout(async () => {
       setBusy(true)
-      try { setResults(await searchFoods(q)) } catch { toast(t('Search needs a connection.')) } finally { setBusy(false) }
+      const [off, gen] = await Promise.all([searchFoods(q).catch(() => null), fdc ? searchGeneric(q, BACKEND) : []])
+      if (!off && !gen.length) toast(t('Search needs a connection.'))
+      setResults(off || []); setGeneric(gen); setBusy(false)
     }, 350)
     return () => clearTimeout(tm.current)
   }, [q])
@@ -135,14 +173,15 @@ function AddFood({ meal, day, close }) {
       const code = await scanCode()
       if (!code) return
       setBusy(true)
-      const f = await foodByBarcode(code.value)
+      const { food: f, cached } = await foodByBarcodeCached(S, code.value)
       setBusy(false)
-      if (f) { setPicked(f); setGrams(f.serving || 100) } else toast(t('Not in Open Food Facts yet. Try a search or quick add.'))
+      if (f) { if (!cached) update(s => cacheBarcode(s, f)); setPicked(f); setGrams(f.serving || 100) } else toast(t('Not in Open Food Facts yet. Try a search or quick add.'))
     } catch { setBusy(false); toast(t('Couldn’t open the camera.')) }
   }
 
   if (picked) return <div>
-    <h3>{picked.name}</h3>
+    <div className="ls-row" style={{ justifyContent: 'space-between' }}><h3 style={{ margin: 0 }}>{picked.name}</h3>
+      <button className="iconbtn" onClick={() => update(s => toggleFavourite(s, picked))} aria-pressed={isFavourite(S, picked)} aria-label={t('Favourite')}><Icon name={isFavourite(S, picked) ? 'starFill' : 'star'} /></button></div>
     <div className="ls-sub" style={{ marginBottom: 12 }}>{[picked.brand, `${picked.per100.kcal} kcal / 100 g`].filter(Boolean).join(' · ')}</div>
     <label className="ls-k">{t('Amount (g)')}
       <input className="ls-input" inputMode="decimal" value={grams} onChange={e => setGrams(e.target.value)} />
@@ -173,10 +212,32 @@ function AddFood({ meal, day, close }) {
     <button className="ls-btn full" onClick={() => setQuick(true)}>{t('Quick add calories')}</button>
     {busy && <div className="ls-sub" style={{ marginTop: 10 }}>{t('Searching…')}</div>}
     <div className="ls-list" style={{ marginTop: 6, maxHeight: '52vh', overflowY: 'auto' }}>
+      {q.trim().length >= 2 && generic.length > 0 && <div className="ls-k" style={{ margin: '10px 0 4px' }}>{t('Generic foods · USDA')}</div>}
+      {(q.trim().length >= 2 ? generic : []).map(f => <button key={'g' + f.fdcId} className="ls-li" style={{ textAlign: 'start', width: '100%' }} onClick={() => { setPicked(f); setGrams(100) }}>
+        <div style={{ flex: 1, minWidth: 0 }}><div style={{ fontWeight: 600 }}>{f.name}</div><div className="ls-sub">{`${f.per100.kcal} kcal / 100 g · P ${f.per100.p} · C ${f.per100.c} · F ${f.per100.f}`}</div></div>
+        <Icon name="plus" />
+      </button>)}
+      {q.trim().length >= 2 && generic.length > 0 && results.length > 0 && <div className="ls-k" style={{ margin: '10px 0 4px' }}>{t('Packaged · Open Food Facts')}</div>}
       {(q.trim().length >= 2 ? results : []).map((f, i) => <button key={(f.code || '') + i} className="ls-li" style={{ textAlign: 'start', width: '100%' }} onClick={() => { setPicked(f); setGrams(f.serving || 100) }}>
         <div style={{ flex: 1, minWidth: 0 }}><div style={{ fontWeight: 600 }}>{f.name}</div><div className="ls-sub">{[f.brand, `${f.per100.kcal} kcal / 100 g`].filter(Boolean).join(' · ')}</div></div>
         <Icon name="plus" />
       </button>)}
+      {q.trim().length < 2 && meals.length > 0 && <>
+        <div className="ls-k" style={{ margin: '12px 0 4px' }}>{t('Saved meals')}</div>
+        {meals.map(m => <button key={m.id} className="ls-li" style={{ textAlign: 'start', width: '100%' }} onClick={() => {
+          let made = []; update(s => { made = logSavedMeal(s, day, meal, m) }); made.forEach(e => foodToHealth(e.id, e)); toast(t('Added {0}', m.name)); close()
+        }}>
+          <div style={{ flex: 1 }}><div style={{ fontWeight: 600 }}>{m.name}</div><div className="ls-sub">{tn('{0} item', '{0} items', m.items.length)} · {m.items.reduce((a, x) => a + x.kcal, 0)} kcal</div></div>
+          <Icon name="plus" />
+        </button>)}
+      </>}
+      {q.trim().length < 2 && favs.length > 0 && <>
+        <div className="ls-k" style={{ margin: '12px 0 4px' }}>{t('Favourites')}</div>
+        {favs.map(({ key, item }) => <button key={key} className="ls-li" style={{ textAlign: 'start', width: '100%' }} onClick={() => item.per100 ? (setPicked(item), setGrams(item.serving || 100)) : log({ ...item, id: Date.now().toString(36), meal, t: Date.now() })}>
+          <div style={{ flex: 1 }}><div style={{ fontWeight: 600 }}>{item.name}</div><div className="ls-sub">{item.per100 ? `${item.per100.kcal} kcal / 100 g` : `${item.g ? item.g + ' g · ' : ''}${item.kcal} kcal`}</div></div>
+          <Icon name="starFill" />
+        </button>)}
+      </>}
       {q.trim().length < 2 && recent.length > 0 && <>
         <div className="ls-k" style={{ margin: '12px 0 4px' }}>{t('Recent')}</div>
         {recent.map(e => <button key={e.id} className="ls-li" style={{ textAlign: 'start', width: '100%' }} onClick={() => log({ ...e, id: Date.now().toString(36), meal, t: Date.now() })}>
