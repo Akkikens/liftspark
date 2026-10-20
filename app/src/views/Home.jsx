@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import TodayCard from '../components/TodayCard.jsx'
 import { WearableHomeCard } from '../components/Wearables.jsx'
+import ReadinessCard from '../components/ReadinessCard.jsx'
 import { useStore } from '../store/useStore.js'
 import { effectiveRoutines, effectiveRoutineIds, nextTrainingDay, streakWeeks, lastBW, setsDoneActive } from '../lib/history.js'
 import { fmtNum, fmtDate, todayISO, isoOf, weekStartOf, weekDayOffset, DAYS, DAYN } from '../lib/format.js'
@@ -123,6 +124,7 @@ export default function Home() {
       </div>
     )}
     <WearableHomeCard nav={nav} />
+    <ReadinessCard />
     {/* Today's strain and calories only once there is something to show: an empty card of dashes
         on a first launch says nothing. */}
     {((S.workouts || []).length > 0 || !!S.lsWearable?.kind) && <TodayCard />}

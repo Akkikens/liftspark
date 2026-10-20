@@ -1927,6 +1927,9 @@ function ActiveWorkout() {
     {listMode && chipRow}
     </div>
     {!editing && !A.backfill && <HrDock />}
+    {!editing && A.lsReadiness && <div className="ls-note ls-ready-note" role="note">
+      {A.lsReadiness === 'lighter' ? t('Lighter session from your readiness: one set fewer per exercise, stop 2–3 reps short of failure.') : t('Good recovery: an extra set on your first two lifts.')}
+    </div>}
     {editing && <p className="muted small">{t('Editing a saved workout. Date and duration stay unchanged.')}</p>}
     {A.backfill && <div className="muted small" style={{ marginBottom: 8 }}>{t('Logging a past workout, so no rest timers.')}</div>}
 

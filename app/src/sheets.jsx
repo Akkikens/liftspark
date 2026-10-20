@@ -1,4 +1,5 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
+import { adjustEntries } from './lib/ls-readiness.js'
 import { useStore } from './store/useStore.js'
 import { useUI } from './store/useUI.js'
 import { EXDB, EXIDX, BODYPARTS, isCardio, isBodyweightEq, allExercises, equipmentOf, byCategory, smOf, searchExercises, similarExercises, exOr, isAssisted, betterWeight, beatsWeight, isCustomEx } from './lib/exercises.js'
@@ -2782,10 +2783,14 @@ export function startFlow(routineIds) {
 }
 export function beginWorkout(routineIds, bw) {
   const st = S()
-  const { entries, routineIds: rids, routines } = buildCombinedEntries(st, routineIds)
+  const built = buildCombinedEntries(st, routineIds)
+  const { routineIds: rids, routines } = built
+  // Liftspark: today's readiness suggestion, when the user applied it on Home (lib/ls-readiness.js).
+  const lsLevel = st.lsReadinessPlan?.d === todayISO() ? st.lsReadinessPlan.level : null
+  const entries = lsLevel ? adjustEntries(built.entries, lsLevel) : built.entries
   update(s => {
     s.active = {
-      id: uid(), d: todayISO(), start: Date.now(),
+      id: uid(), d: todayISO(), start: Date.now(), ...(lsLevel && lsLevel !== 'standard' ? { lsReadiness: lsLevel } : {}),
       // A session tracks its routines as a list; per-entry `rid` carries which one each
       // exercise came from. No top-level `excludeFromProgression` — per-entry `noProg` does it.
       routineIds: rids,
