@@ -44,14 +44,26 @@ async function save(provider, t) {
   return out
 }
 
+const b64url = bytes => btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+export const randomString = n => b64url(crypto.getRandomValues(new Uint8Array(n))).slice(0, n)
+export async function s256(verifier) {
+  return b64url(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier))))
+}
+
 /** The whole sign-in. Throws { code: 'cancelled' } when the user closes the sheet. */
 export async function connect(provider) {
-  const back = await webAuth(`${BACKEND}/api/oauth/${provider}/start`)
-  const code = new URL(back).searchParams.get('code')
-  const err = new URL(back).searchParams.get('error')
+  // The state proves the code that comes back belongs to this sign-in; PKCE (WHOOP, Oura) proves the
+  // token request comes from the same phone that started it.
+  const state = randomString(32), verifier = randomString(64)
+  const challenge = await s256(verifier)
+  const back = await webAuth(`${BACKEND}/api/oauth/${provider}/start?state=${state}&code_challenge=${challenge}`)
+  const params = new URL(back).searchParams
+  const code = params.get('code')
+  const err = params.get('error')
   if (!code) throw Object.assign(new Error(err || 'No authorization code'), { code: err || 'denied' })
+  if (params.get('state') !== state) throw Object.assign(new Error('Sign-in didn’t match. Try again.'), { code: 'state' })
   const r = await fetch(`${BACKEND}/api/oauth/${provider}/token`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }),
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, code_verifier: verifier }),
   })
   if (!r.ok) throw new Error(`Sign-in failed (${r.status})`)
   return save(provider, await r.json())
@@ -77,7 +89,7 @@ export async function postToStrava(w, caption) {
   const body = new URLSearchParams({
     name: w.name || 'Strength training',
     sport_type: 'WeightTraining',
-    start_date_local: new Date(w.start).toISOString(),
+    start_date_local: localISO(w.start),
     elapsed_time: String(Math.max(60, Math.round((w.end - w.start) / 1000))),
     description: caption,
     trainer: '1',
@@ -90,7 +102,7 @@ export async function postToStrava(w, caption) {
 
 // ---- WHOOP v2 and Oura v2: today's readiness ----
 
-async function getJson(url, token) {
+export async function getJson(url, token) {
   const r = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
   if (!r.ok) throw new Error(String(r.status))
   return r.json()
@@ -126,4 +138,10 @@ export async function ouraToday() {
   ])
   const r = rd?.data?.[0], s = sl?.data?.[0]
   return { readiness: r?.score ?? null, sleep: s?.score ?? null, restingHr: r?.contributors?.resting_heart_rate ?? null }
+}
+
+/** Strava's start_date_local: the wall-clock time where it happened, without a zone ("…T18:30:00"). */
+export function localISO(ms) {
+  const d = new Date(ms), p = n => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`
 }

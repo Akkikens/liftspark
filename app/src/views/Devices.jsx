@@ -23,6 +23,7 @@ export default function Devices() {
     </div>
     <HeartRateSensor />
     <AppleHealth />
+    <button className="ls-btn full" style={{ marginTop: 12 }} onClick={() => nav('/import')}>{t('Import your history (Health, WHOOP, Oura, files)')}</button>
     <StravaCard />
     <Wearables />
     <BodyProfile />

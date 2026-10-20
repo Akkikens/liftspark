@@ -18,10 +18,12 @@ import { newProfile } from '../lib/equipment.js'
 import { bmr, dailyGoal, macroGoals, ACTIVITY, OBJECTIVE } from '../lib/fuel.js'
 import { generatePlan, applyPlan, CUSTOM_CHOICES, GOAL_OBJECTIVE } from '../lib/ls-plan.js'
 import { WearablePicker } from '../components/Wearables.jsx'
+import { readHealth, applyHealth } from '../lib/ls-import.js'
+import { importFromApp, importFromHevy } from '../sheets.jsx'
 import Icon from '../components/Icon.jsx'
 
 const LB = 2.2046226218
-const STEPS = ['welcome', 'goal', 'level', 'schedule', 'place', 'sex', 'body', 'activity', 'calories', 'health', 'wearable', 'notify', 'plan', 'done']
+const STEPS = ['welcome', 'goal', 'level', 'schedule', 'place', 'sex', 'body', 'activity', 'calories', 'health', 'wearable', 'import', 'notify', 'plan', 'done']
 const LAST_Q = STEPS.indexOf('plan')
 
 const GOAL_OPTS = [
@@ -110,6 +112,7 @@ export default function Onboarding() {
         {name === 'calories' && <Calories {...props} />}
         {name === 'health' && <HealthStep {...props} />}
         {name === 'wearable' && <WearableStep {...props} />}
+        {name === 'import' && <ImportStep {...props} />}
         {name === 'notify' && <Notify {...props} />}
         {name === 'plan' && <PlanStep {...props} />}
         {name === 'done' && <Done a={a} onGo={finish} />}
@@ -334,6 +337,43 @@ function WearableStep({ save, next }) {
     footer={<><Primary onClick={next}>{t('Continue')}</Primary><Skip onClick={() => { save({ wearable: 'skipped' }); next() }} /></>}>
     <WearablePicker onDone={() => save({ wearable: 'connected' })} />
     <div className="lob-fine">{t('Strava: in the Strava app, You → Settings → Applications, Services, and Devices → Health. Your Liftspark workouts then sync automatically.')}</div>
+  </Q>
+}
+
+function ImportStep({ a, save, next, S, update }) {
+  const [busy, setBusy] = useState(null)
+  const [done, setDone] = useState(a.imported || null)
+  const fileRef = useRef(null)
+  const health90 = async () => {
+    setBusy(t('Reading Apple Health…'))
+    try {
+      const r = await readHealth({ days: 90, profile: S.lsProfile || {}, progress: k => setBusy(t('Reading {0}…', t(k))) })
+      let c = null
+      update(s => { c = applyHealth(s, r) })
+      const line = [c.workouts && t('{0} workouts', c.workouts), c.weights && t('{0} weigh-ins', c.weights), c.days && t('{0} days of recovery and sleep', c.days)].filter(Boolean).join(' · ') || t('Nothing to import yet')
+      setDone(line); save({ imported: line })
+    } catch { setDone(t('Couldn’t read Apple Health. You can import later from Settings.')) }
+    finally { setBusy(null) }
+  }
+  return <Q kicker={t('Your history')} title={t('Bring your history')} sub={t('Optional. Past workouts, weight, sleep and recovery make your trends and recovery advice useful from day one.')}
+    footer={<><Primary onClick={next}>{t('Continue')}</Primary><Skip onClick={next} /></>}>
+    <input ref={fileRef} type="file" accept=".csv,.xml,text/csv,text/xml" hidden onChange={e => { const f = e.target.files?.[0]; if (f) importFromApp(f); e.target.value = '' }} />
+    <div className="lob-choices">
+      <button className="lob-choice" onClick={health90} disabled={!!busy}>
+        <span className="lob-choice-ic" aria-hidden="true"><Icon name="heart" /></span>
+        <span className="lob-choice-t"><b>{t('Apple Health')}</b><small>{busy || t('Last 90 days of workouts, weight, resting HR, HRV and sleep (incl. Garmin, Oura, Apple Watch)')}</small></span>
+      </button>
+      <button className="lob-choice" onClick={() => fileRef.current?.click()}>
+        <span className="lob-choice-ic" aria-hidden="true"><Icon name="download" /></span>
+        <span className="lob-choice-t"><b>{t('Strong, Hevy or FitNotes')}</b><small>{t('Pick the CSV export from your old app')}</small></span>
+      </button>
+      <button className="lob-choice" onClick={importFromHevy}>
+        <span className="lob-choice-ic" aria-hidden="true"><Icon name="key" /></span>
+        <span className="lob-choice-t"><b>{t('Hevy Pro')}</b><small>{t('Import directly with an API key')}</small></span>
+      </button>
+    </div>
+    {done && <div className="ls-done" role="status"><Icon name="checkCircle" />{done}</div>}
+    <div className="lob-fine">{t('WHOOP, Oura and Garmin files: Settings → Import your data.')}</div>
   </Q>
 }
 

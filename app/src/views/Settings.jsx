@@ -38,6 +38,8 @@ import { starterPlanSheet, confirmSheet, importFromApp, importFromHevy, equipmen
 import Icon from '../components/Icon.jsx'
 import { durationSheet } from '../components/DurationWheel.jsx'
 import { showsConnection, showsLocalLine } from '../components/SyncBanner.jsx'
+import { PROVIDERS, disconnect as disconnectProvider } from '../lib/integrations.js'
+import { ble } from '../lib/ls-native.js'
 import BackupFolderRow, { useBackupFolder, autoBackupSubtitle } from '../components/BackupFolderRow.jsx'
 import { ServerSyncSection, KeptChangesRows, leaveServer, connectServer, passkeySignIn } from '../components/ServerSync.jsx'
 import { passwordOn, PasswordRow, openPasswordSignIn, openPasswordRegister } from '../components/PasswordAuth.jsx'
@@ -255,7 +257,7 @@ export default function Settings({ page = null, find = null, via = null }) {
   // and the copy it exports is the one that has not reached the server.
   const doExport = async () => {
     const json = JSON.stringify(useStore.getState().S, null, 2)
-    const name = 'opengym-backup-' + todayISO() + '.json'
+    const name = 'liftspark-backup-' + todayISO() + '.json'
     // WKWebView can't download blob URLs — the native build hands the file to the share sheet.
     if (MOBILE) {
       try { await shareExport(json, name); toast(t('Backup exported')) } catch (e) { /* share sheet dismissed */ }
@@ -275,7 +277,7 @@ export default function Settings({ page = null, find = null, via = null }) {
     let out
     try { out = await exportBackupZip(st.S, { fetchOne: signedIn ? fetchToStore : null }) }
     catch { toast(t('Something went wrong')); return }
-    const name = 'opengym-backup-' + todayISO() + '.zip'
+    const name = 'liftspark-backup-' + todayISO() + '.zip'
     if (out.missing) toast(tn('{0} file could not be included', '{0} files could not be included', out.missing))
     if (MOBILE) {
       try { await shareExportBlob(out.blob, name); if (!out.missing) toast(t('Backup exported')) } catch (e) { /* share sheet dismissed */ }
@@ -382,6 +384,9 @@ export default function Settings({ page = null, find = null, via = null }) {
       if (user) api('/api/coach/forget', { method: 'POST', body: '{}' }).catch(() => {})
       if (coachLocal?.mode === 'byok') forgetCoach().catch(() => {})
       resetAll()
+      // Liftspark: sign out of Strava/WHOOP/Oura (Keychain tokens) and forget the paired sensor.
+      PROVIDERS.forEach(p => disconnectProvider(p).catch(() => {}))
+      ble.forget(); ble.clearTrace()
       nav('/home'); toast(t('All data reset'))
       clearMediaAfterReset(!!user).catch(() => {})
     },
@@ -786,6 +791,7 @@ export default function Settings({ page = null, find = null, via = null }) {
       </Section>
       {MOBILE && android && <HealthConnectCard S={S} toast={toast} />}
       <Section title={t('Bring data in')}>
+        <Row icon="heart" iconTint="var(--z5)" title={t('Import your data')} subtitle={t('Apple Health, WHOOP, Oura and workout files')} accessory="chevron" onClick={() => nav('/import')} />
         <Row icon="download" iconTint="var(--teal)" title={t('Import backup')} accessory="chevron" onClick={() => fileRef.current.click()} />
         <Row icon="download" iconTint="var(--teal)" title={t('Import from another app')}
           subtitle={t('FitNotes, Strong, Hevy, or body weight from Apple Health')}
@@ -961,6 +967,8 @@ function SettingsRoot({ ctx, preview, open, user, sync, home, go }) {
       <Section>
         <Row icon="bolt" iconTint="var(--spark)" title={t('Connect your wearable')} subtitle={t('Apple Watch, WHOOP, Garmin, Oura, heart-rate straps')}
           accessory="chevron" onClick={() => nav('/connect')} className="sp-root-row" />
+        <Row icon="download" iconTint="var(--teal)" title={t('Import your data')} subtitle={t('Apple Health, WHOOP, Oura, Garmin files, Strong and Hevy')}
+          accessory="chevron" onClick={() => nav('/import')} className="sp-root-row" />
         <Row icon="sparkles" iconTint="var(--orange)" title={t('Redo onboarding')} subtitle={t('Goal, body, calorie target and a fresh starter plan')}
           accessory="chevron" onClick={() => useStore.getState().update(s => { s.lsOnboarding = { step: 1, a: {} } })} className="sp-root-row" />
         <Row icon="heart" iconTint="var(--z5)" title={t('Devices & Health')} subtitle={t('Heart rate, Apple Health, Strava, WHOOP, Oura')}

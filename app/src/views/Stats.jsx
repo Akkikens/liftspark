@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
+import StrainTrend from '../components/StrainTrend.jsx'
+import WellnessTrends from '../components/WellnessTrends.jsx'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store/useStore.js'
 import { EXIDX, matchExercise, betterWeight, isAssisted } from '../lib/exercises.js'
@@ -643,6 +645,9 @@ export default function Stats() {
       <div className="tile"><div className="l"><Icon name="scale" />{t('Weight 30d')}</div><div className="v" style={{ fontSize: 22, color: bwDelta30 === null ? 'inherit' : bwDeltaColor(bwDelta30, (lastBW(S) || {}).w || 0) }}>{bwDelta30 === null ? '–' : (bwDelta30 > 0 ? '+' : '') + fmtNum(bwDelta30) + ' ' + S.unit}</div></div>
 
     </div>
+
+    <StrainTrend workouts={workouts} />
+    <WellnessTrends S={S} onImport={() => nav('/import')} />
 
     <div className="card">
       <h2>{t('Activity (last 12 months)')}</h2>

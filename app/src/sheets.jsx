@@ -2132,7 +2132,7 @@ export async function exportPlanFile() {
   const st = S(), user = useStore.getState().user
   const bundle = buildPlanBundle(st, user?.name ? t('{0}’s plan', user.name) : '')
   const json = JSON.stringify(bundle, null, 2)
-  const name = 'opengym-plan-' + todayISO() + '.json'
+  const name = 'liftspark-plan-' + todayISO() + '.json'
   if (MOBILE) { try { await shareExport(json, name) } catch (e) { /* dismissed */ } return }
   const blob = new Blob([json], { type: 'application/json' })
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); URL.revokeObjectURL(a.href)
@@ -2750,9 +2750,13 @@ export function WorkoutRow({ w, onClick }) {
   return <div className="item" {...tappable(onClick)}>
     <span className="lrow-i" style={{ width: 34, height: 34, borderRadius: 8, fontSize: 19 }}><Icon name={glyph} /></span>
     <div className="grow"><div className="tt">{w.name}</div>
-      <div className="ss">{[fmtDate(w.d, true), ...durPart(w.end - w.start), tn('{0} set', '{0} sets', setsDone(w)), fmtVol(w.vol, st.unit)].join(' · ')}</div></div>
+      <div className="ss">{(w.imported
+        // Imported from Health: no sets to count, so say where it came from instead.
+        ? [fmtDate(w.d, true), ...durPart(w.end - w.start), w.ls?.avgHr && `${w.ls.avgHr} bpm`, w.imported.source || t('Apple Health')].filter(Boolean)
+        : [fmtDate(w.d, true), ...durPart(w.end - w.start), tn('{0} set', '{0} sets', setsDone(w)), fmtVol(w.vol, st.unit)]).join(' · ')}</div></div>
     {mediaN > 0 && <span className="wrow-media" title={tn('{0} photo or video', '{0} photos or videos', mediaN)} aria-label={tn('{0} photo or video', '{0} photos or videos', mediaN)}><Icon name="image" />{mediaN}</span>}
     {w.prs && w.prs.length > 0 && <span className="pr"><Icon name="trophy" />{w.prs.length} PR</span>}
+    {w.ls?.strain != null && <span className="ls-strain-chip" aria-label={t('Strain {0}', w.ls.strain)}>{w.ls.strain}</span>}
     <Icon name="chevronRight" className="chev" />
   </div>
 }

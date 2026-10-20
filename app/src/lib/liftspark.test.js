@@ -103,3 +103,15 @@ describe('exercise library order', async () => {
     expect(list.length).toBe(CATALOGUE.length)
   })
 })
+
+describe('integrations', () => {
+  it('makes the RFC 7636 S256 challenge', async () => {
+    const { s256 } = await import('./integrations.js')
+    expect(await s256('dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk')).toBe('E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM')
+  })
+  it('gives Strava a local start time without a zone', async () => {
+    const { localISO } = await import('./integrations.js')
+    const s = localISO(new Date(2026, 9, 19, 18, 5, 9).getTime())
+    expect(s).toBe('2026-10-19T18:05:09')
+  })
+})

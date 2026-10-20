@@ -276,7 +276,8 @@ export const AUTO_BACKUP_DIR = 'Liftspark'
 export const AUTO_BACKUP_KEEP = 14
 // Only the exact names writeAutoBackup gives its files are ever pruned; anything else someone
 // keeps in the folder is theirs.
-const AUTO_BACKUP_NAME = /^opengym-backup-\d{4}-\d{2}-\d{2}(-[2-9])?\.json$/
+// Liftspark's names, plus openGym's, so backups made before the rename still rotate out.
+const AUTO_BACKUP_NAME = /^(liftspark|opengym)-backup-\d{4}-\d{2}-\d{2}(-[2-9])?\.json$/
 
 // Android's scoped storage lets an install write over, list and delete only the files it wrote
 // itself. After a reinstall, or with the test build beside the real one, today's name can belong
@@ -303,7 +304,7 @@ export async function writeAutoBackup(state) {
   // day then went without a copy, silently, while the newest file there was another install's.
   let name = null
   for (const suffix of ['', '-2', '-3', '-4', '-5', '-6', '-7', '-8', '-9']) {
-    const n = `opengym-backup-${day}${suffix}.json`
+    const n = `liftspark-backup-${day}${suffix}.json`
     try { await write(n); name = n; break } catch (e) { /* owned by another install, or the disk said no: the next name */ }
   }
   if (!name) return   // best effort — the private mirror in Directory.Data still has the data
@@ -400,7 +401,7 @@ async function releaseFolder(uri) {
 async function writeToChosenFolder(state, day) {
   const folder = await backupFolder()
   if (!folder.uri) return false
-  const name = `opengym-backup-${day}.json`
+  const name = `liftspark-backup-${day}.json`
   try {
     await loadFolderPlugin()
     const { ok } = await folderPlugin.check({ uri: folder.uri })

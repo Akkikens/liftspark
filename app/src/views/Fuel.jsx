@@ -7,6 +7,7 @@ import { MEALS, MEAL_NAMES, searchFoods, foodByBarcode, entryFor, quickEntry, da
 import { bodyweightKg } from '../lib/ls-workout.js'
 import { ageOf } from '../lib/strain.js'
 import { health } from '../lib/ls-native.js'
+import { loadHealth } from '../lib/health-sync.js'
 import { scanCode } from '../lib/scan.js'
 import { MOBILE } from '../lib/mobile.js'
 import Ring from '../components/Ring.jsx'
@@ -34,7 +35,7 @@ export default function Fuel() {
   const left = goal + (profile.addExercise !== false ? active : 0) - tot.kcal
 
   const openAdd = meal => useUI.getState().openSheet(close => <AddFood meal={meal} day={day} close={close} />)
-  const del = id => update(s => removeFood(s, day, id))
+  const del = id => { update(s => removeFood(s, day, id)); foodToHealth(id, null) }
 
   return <div className="narrow">
     <div className="hdr">
@@ -125,7 +126,7 @@ function AddFood({ meal, day, close }) {
 
   const log = entry => {
     update(s => addFood(s, day, entry))
-    health.saveDietaryEnergy({ id: 'liftspark-food-' + entry.id, time: entry.t, kcal: entry.kcal }).catch(() => {})
+    foodToHealth(entry.id, entry)
     toast(t('Added {0}', entry.name))
     close()
   }
@@ -185,4 +186,12 @@ function AddFood({ meal, day, close }) {
       </>}
     </div>
   </div>
+}
+
+// Food energy goes to Apple Health only while "Sync with Apple Health" is on; a deleted entry is
+// written as zero, which removes its sample (HealthKitPlugin.saveDietaryEnergy).
+async function foodToHealth(id, entry) {
+  const h = await loadHealth().catch(() => null)
+  if (!h?.on) return
+  health.saveDietaryEnergy({ id: 'liftspark-food-' + id, time: entry?.t || Date.now(), kcal: entry ? entry.kcal : 0 }).catch(() => {})
 }
