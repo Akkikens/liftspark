@@ -40,6 +40,7 @@ import { durationSheet } from '../components/DurationWheel.jsx'
 import { showsConnection, showsLocalLine } from '../components/SyncBanner.jsx'
 import { PROVIDERS, disconnect as disconnectProvider } from '../lib/integrations.js'
 import { ble } from '../lib/ls-native.js'
+import ICloudRow from '../components/ICloudRow.jsx'
 import BackupFolderRow, { useBackupFolder, autoBackupSubtitle } from '../components/BackupFolderRow.jsx'
 import { ServerSyncSection, KeptChangesRows, leaveServer, connectServer, passkeySignIn } from '../components/ServerSync.jsx'
 import { passwordOn, PasswordRow, openPasswordSignIn, openPasswordRegister } from '../components/PasswordAuth.jsx'
@@ -790,6 +791,7 @@ export default function Settings({ page = null, find = null, via = null }) {
         {MOBILE && android && S.autoBackup && <BackupFolderRow />}
       </Section>
       {MOBILE && android && <HealthConnectCard S={S} toast={toast} />}
+      {MOBILE && <ICloudRow />}
       <Section title={t('Bring data in')}>
         <Row icon="heart" iconTint="var(--z5)" title={t('Import your data')} subtitle={t('Apple Health, WHOOP, Oura and workout files')} accessory="chevron" onClick={() => nav('/import')} />
         <Row icon="download" iconTint="var(--teal)" title={t('Import backup')} accessory="chevron" onClick={() => fileRef.current.click()} />

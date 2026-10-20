@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0034D218B97D7E021E793FA4 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDC9370FB962479703EA0EE5 /* CloudKit.framework */; };
 		1420F1BF8E2D54A36394FCC3 /* LiftsparkWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04727DC3CD88349EFD52748E /* LiftsparkWidgets.swift */; };
 		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
 		38086415BE6193248C0FD410 /* ActivityKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7310A8F908B8E01A212034F0 /* ActivityKit.framework */; };
@@ -35,6 +36,7 @@
 		AA010000000000000000002B /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA010000000000000000002A /* MainViewController.swift */; };
 		AA010000000000000000003B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = AA010000000000000000003A /* PrivacyInfo.xcprivacy */; };
 		B7FCD932D674326870039013 /* LiftsparkWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AE0A711EA23C8CD306AFCDD4 /* LiftsparkWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D50E774B5CF20220B7172F7C /* CloudSyncPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE02A9048A5592A7E3C2DE62 /* CloudSyncPlugin.swift */; };
 		ED99DB677C279083327D496B /* ActivityKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7310A8F908B8E01A212034F0 /* ActivityKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -94,8 +96,10 @@
 		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
 		C21491D32D2DF9B78C7FB255 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/WidgetKit.framework; sourceTree = DEVELOPER_DIR; };
 		CE99C062EA587381EBB5A8D4 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DDC9370FB962479703EA0EE5 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
 		E4B4EED41957E5709C70CA34 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
+		FE02A9048A5592A7E3C2DE62 /* CloudSyncPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CloudSyncPlugin.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +110,7 @@
 				A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */,
 				ED99DB677C279083327D496B /* ActivityKit.framework in Frameworks */,
 				9200EFFBC3508C5904882BD9 /* WidgetKit.framework in Frameworks */,
+				0034D218B97D7E021E793FA4 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,6 +201,7 @@
 				AA010000000000000000003A /* PrivacyInfo.xcprivacy */,
 				50B271D01FEDC1A000F3C39B /* public */,
 				74033539F90E56A14BAA364F /* LiveActivityPlugin.swift */,
+				FE02A9048A5592A7E3C2DE62 /* CloudSyncPlugin.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -216,6 +222,7 @@
 				C21491D32D2DF9B78C7FB255 /* WidgetKit.framework */,
 				E4B4EED41957E5709C70CA34 /* Foundation.framework */,
 				9AA3C3DE9BF10753B2986022 /* SwiftUI.framework */,
+				DDC9370FB962479703EA0EE5 /* CloudKit.framework */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -373,6 +380,7 @@
 				AA0100000000000000000004 /* PrintPlugin.m in Sources */,
 				78901409E67484CE6BD0E27E /* WorkoutActivity.swift in Sources */,
 				820F2C2142F92B607D749DC4 /* LiveActivityPlugin.swift in Sources */,
+				D50E774B5CF20220B7172F7C /* CloudSyncPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -38,6 +38,8 @@ export const health = {
   importWorkouts: (start, end) => call('health', 'importWorkouts', { start, end }, { workouts: [] }),
   importQuantity: (type, start, end) => call('health', 'importQuantity', { type, start, end }, { days: [] }),
   importSleep: (start, end) => call('health', 'importSleep', { start, end }, { nights: [] }),
+  /** Throws "Authorization not determined" when Health hasn't been asked for sleep/HRV yet. */
+  probeSleep: (start, end) => call('health', 'importSleep', { start, end }),
   stopLive: () => call('health', 'stopLiveHeartRate', undefined, null),
   open: () => call('health', 'openSettings', undefined, null),
 }

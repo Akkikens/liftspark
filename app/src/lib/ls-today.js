@@ -15,6 +15,9 @@ export async function refreshToday(now = Date.now()) {
   const merge = (src, daily) => useStore.getState().update(s => { mergeDaily(s, src, daily) })
   try {
     if ((await loadHealth())?.on) {
+      // Sync was turned on before Liftspark read HRV and sleep: ask once for the new types, which
+      // iOS reports as "not determined" until then.
+      await health.probeSleep(start, now).catch(async e => { if (/not determined/i.test(e?.message || '')) await health.request() })
       const daily = {}
       const day = d => (daily[d] = daily[d] || {})
       for (const { d, v } of (await health.importQuantity('restingHeartRate', start, now)).days || []) day(d).rhr = v

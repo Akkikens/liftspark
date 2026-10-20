@@ -1,4 +1,6 @@
 import { StrictMode } from 'react'
+import { initICloud } from './lib/ls-icloud.js'
+import { onAppActive } from './lib/mobile.js'
 import { initLive } from './lib/ls-live.js'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
@@ -36,3 +38,4 @@ if (!MOBILE && 'serviceWorker' in navigator && location.protocol === 'https:') {
 // Liftspark: listen for heart rate from a paired sensor or the watch from the start.
 initHeart()
 initLive()
+initICloud(onAppActive)
