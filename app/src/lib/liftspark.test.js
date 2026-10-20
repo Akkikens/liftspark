@@ -95,3 +95,17 @@ describe('food', () => {
     expect(S.food['2026-10-19']).toBeUndefined()
   })
 })
+
+describe('exercise library order', async () => {
+  const { popularFirst, hasPicture, STAPLES } = await import('./ls-library.js')
+  const { CATALOGUE } = await import('./exercises.js')
+  it('leads with the staple lifts, then pictured exercises, then the rest', () => {
+    const list = popularFirst(CATALOGUE)
+    expect(list[0].n).toBe('barbell bench press')
+    expect(list.slice(0, 5).map(e => e.n)).toEqual(['barbell bench press', 'barbell full squat', 'barbell deadlift', 'barbell standing military press', 'barbell bent over row'])
+    const rest = list.filter(e => !STAPLES.includes(e.n))
+    const firstWithout = rest.findIndex(e => !hasPicture(e))
+    expect(rest.slice(firstWithout).some(hasPicture)).toBe(false)
+    expect(list.length).toBe(CATALOGUE.length)
+  })
+})

@@ -854,7 +854,7 @@ export default function Settings({ page = null, find = null, via = null }) {
       {/* account (demo and mobile builds have nothing to sign in to) */}
       {!(MOBILE && user) && <Section title={MOBILE ? t('Your data') : DEMO ? t('Demo') : t('Account')}>
         {MOBILE ? <>
-          <Row icon="lock" iconTint="var(--acc)" title={t('All data stays on this phone')} subtitle={t('No account, no cloud. Back it up anytime in Data & backup.')} />
+          <Row icon="lock" iconTint="var(--acc)" title={t('Your training data stays on this phone')} subtitle={t('No account and no Liftspark cloud. Food searches go to Open Food Facts; Strava, WHOOP and Oura only when you connect them. Back up anytime in Data & backup.')} />
           <KeptChangesRows />
         </> : DEMO ? <>
           <Row icon="info" iconTint="var(--acc)" title={t('You’re in the demo')} subtitle={t('Example data, stored only in this browser. Go wild and change anything you like.')} />
@@ -932,7 +932,7 @@ function SettingsRoot({ ctx, preview, open, user, sync, home, go }) {
       title: user.name || t('Account'),
       sub: sync && sync.status && sync.status !== 'ok' ? t('Sync needs a look') : MOBILE ? t('Synced with your server') : t('Account, devices and sync'),
     }
-    : MOBILE ? { title: t('This phone'), sub: t('All data stays on this phone') }
+    : MOBILE ? { title: t('This phone'), sub: t('No account. Your training data stays here.') }
     : { title: t('Guest'), sub: t('Your data lives on this device. Sign in to sync.') }
   const initial = user && !DEMO ? String(user.name || '?').trim().charAt(0).toUpperCase() : null
   return <div className="narrow">

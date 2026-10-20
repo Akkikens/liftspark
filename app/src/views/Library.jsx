@@ -15,6 +15,7 @@ import { Button } from '../components/ui.jsx'
 import { tappable, useRevealActiveChip } from '../lib/use-sheet-keyboard.js'
 import { useAutoMore } from '../lib/use-auto-more.js'
 import { isFav, sortFavouritesFirst, sortYoursFirst, usageOf } from '../lib/favourites.js'
+import { popularFirst, hasPicture } from '../lib/ls-library.js'
 
 export default function Library() {
   const nav = useNavigate()
@@ -25,6 +26,7 @@ export default function Library() {
   const [cat, setCat] = useState('')
   const [showAll, setShowAll] = useState(false)   // ignore the active equipment profile for this session
   const [shown, setShown] = useState(40)
+  const [pics, setPics] = useState(false)   // Liftspark: only exercises with a picture
   const bpStrip = useRef(null), eqStrip = useRef(null), catStrip = useRef(null)
   const moreRef = useAutoMore(() => setShown(s => s + 40))
   const profile = activeProfile(S)
@@ -41,15 +43,16 @@ export default function Library() {
   const eqOn = eqOpts.includes(eq) ? eq : ''
   // Favourites float to the top of whatever the filters left (issue #6), the rest keeps its order;
   // while searching, the exercises you have logged or planned follow right after them.
-  const narrowedList = eqOn ? eqFiltered.filter(e => e.eq === eqOn) : eqFiltered
+  const narrowedList = (eqOn ? eqFiltered.filter(e => e.eq === eqOn) : eqFiltered).filter(e => !pics || hasPicture(e) || e.custom)
   const usage = useMemo(() => (q.trim() ? usageOf(S) : null), [q, S.routines, S.workouts])
-  const f = usage ? sortYoursFirst(narrowedList, S, usage) : sortFavouritesFirst(narrowedList, S)
+  // Liftspark: without a search, the common gym lifts and pictured exercises lead (lib/ls-library.js).
+  const f = usage ? sortYoursFirst(narrowedList, S, usage) : sortFavouritesFirst(popularFirst(narrowedList), S)
   useRevealActiveChip(bpStrip, bp)
   useRevealActiveChip(eqStrip, eqOn)
   useRevealActiveChip(catStrip, catOn)
   // A live count at the end of the search field while a search or filter narrows the list
   // (idea and first version: GitLab !31) — how many are left, before scrolling to find out.
-  const narrowed = !!(q.trim() || bp || eqOn || catOn)
+  const narrowed = !!(q.trim() || bp || eqOn || catOn || pics)
   // Close but not exact (a typo too many, most of the words, a similar name), under the results
   // once they are all on screen, so a search almost never ends on "No match".
   // Worked out a beat behind the typing (useDeferredValue): the list itself never waits for it.
@@ -71,8 +74,8 @@ export default function Library() {
     <div className="hdr lib-hdr"><div><h1>{t('Exercises')}</h1></div>
       <Button size="sm" variant="tinted" icon="figureStrength" onClick={() => nav('/muscles')}>{t('By muscle')}</Button>
       <div className="sub lib-count">{ownCount
-        ? tn('{1} animated exercises + 1 of your own', '{1} animated exercises + {0} of your own', ownCount, EXDB.length)
-        : t('{0} exercises', EXDB.length)}</div>
+        ? tn('{1} exercises + 1 of your own', '{1} exercises + {0} of your own', ownCount, EXDB.length)
+        : t('{0} exercises · {1} with pictures', fmtNum(EXDB.length), fmtNum(EXDB.filter(hasPicture).length))}</div>
     </div>
     <div className="search-row" style={{ marginBottom: 10 }}><div className={'search' + (narrowed ? ' has-count' : '') + (q ? ' has-clear' : '')}><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
       <input className="input" placeholder={t('Search…')} value={q} onChange={e => { setQ(e.target.value); setShown(40) }} />
@@ -94,6 +97,7 @@ export default function Library() {
       {BODYPARTS.map(b => <button key={b} className={'chip' + (bp === b ? ' on' : '')} onClick={() => { setBp(b); setShown(40) }}>{t(b)}</button>)}
     </div>
     {catOpts.length > 1 && <div className="chips" ref={catStrip} style={{ marginBottom: 8 }}>
+      <button className={'chip nocap' + (pics ? ' on' : '')} aria-pressed={pics} onClick={() => { setPics(v => !v); setShown(40) }}>{t('With pictures')}</button>
       <button className={'chip nocap' + (!catOn ? ' on' : '')} onClick={() => { setCat(''); setShown(40) }}>{t('Any type')}</button>
       {catOpts.map(x => <button key={x} className={'chip' + (catOn === x ? ' on' : '')} onClick={() => { setCat(x); setShown(40) }}>{t(x)}</button>)}
     </div>}

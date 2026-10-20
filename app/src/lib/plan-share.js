@@ -472,7 +472,7 @@ export function planPrintHTML(S, owner, { routineId } = {}) {
   </header>
   ${week}
   ${body}
-  <footer>${esc(t('Made with Liftspark'))} · opengym.ch</footer>
+  <footer>${esc(t('Made with Liftspark'))}</footer>
 </div></body></html>`
 }
 

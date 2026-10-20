@@ -8,7 +8,7 @@
     "build": "vite build",
     "build:mobile": "VITE_MOBILE=1 VITE_CLIP_EXT=webp vite build && cap sync ios",
     "preview": "vite preview",
-    "test": "TZ=UTC vitest run",
+    "test": "TZ=UTC VITE_LS_COACH=1 vitest run",
     "test:watch": "vitest",
     "test:fatigue-probe": "node scripts/fatigue-monotonic-probe.mjs"
   },

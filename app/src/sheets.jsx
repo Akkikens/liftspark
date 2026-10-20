@@ -44,6 +44,7 @@ import { MOBILE, shareExport, shareExportBlob, printHtml } from './lib/mobile.js
 import { speedUnitOf, toSpeed, fromSpeed } from './lib/speed.js'
 import { buildCompletedWorkout, sessionEnd } from './lib/finish-workout.js'
 import { attachMetrics } from './lib/ls-workout.js'
+import { popularFirst } from './lib/ls-library.js'
 import SparkSummary from './components/SparkSummary.jsx'
 import { refillAfter } from './lib/rotation.js'
 import { isWarmupRow, hasCompletedWork } from './lib/workout-model.js'
@@ -1022,7 +1023,7 @@ function ExerciseDetail({ ex, close }) {
     {/* The catalogue is community-edited (catalogue/README.md): a wrong muscle, a clumsy step or a
         missing translation is one tap from an issue that already names the exercise. */}
     {!isCustomEx(ex) && !ex.missing && <a className="small dim exfix-link" target="_blank" rel="noopener"
-      href={'https://github.com/DuarteSantos8/openGym/issues/new?template=exercise.yml&exercise=' + encodeURIComponent(ex.id + ', ' + ex.n)}>
+      href={'https://github.com/Akkikens/liftspark/issues/new?title=' + encodeURIComponent('Exercise ' + ex.id + ': ' + ex.n)}>
       <Icon name="pencil" /> {t('Suggest a fix for this exercise')}</a>}
   </>
 }
@@ -1315,7 +1316,7 @@ function ExercisePicker({ onPick, title, close, like }) {
   // favourites leading within each half.
   // While searching, what you have logged or planned follows right after them.
   const narrowedList = eqOn ? eqFiltered.filter(e => e.eq === eqOn) : eqFiltered
-  const ranked = q.trim() ? sortYoursFirst(narrowedList, st, usage) : sortFavouritesFirst(narrowedList, st)
+  const ranked = q.trim() ? sortYoursFirst(narrowedList, st, usage) : sortFavouritesFirst(popularFirst(narrowedList), st)
   const f = bp === SAME ? sameMuscleFirst(ranked, likeEx) : ranked
   const chosenCount = Object.keys(usage).length
   const favCount = (st.favEx || []).length

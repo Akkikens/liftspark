@@ -1,3 +1,4 @@
+import { COACH } from '../lib/ls-flags.js'
 // Settings (v1.3.11): which page each row lives on, and the index the search field reads.
 //
 // The root holds eleven rows in four groups plus the account card; each opens a page at
@@ -34,7 +35,7 @@ export const ROOT_GROUPS = [['workout', 'alerts', 'reminders'], ['plan', 'units'
  */
 export function pageVisible(page, ctx) {
   if (page === 'reminders') return !!(ctx.user || ctx.mobile)
-  if (page === 'coach') return !!ctx.mobile
+  if (page === 'coach') return COACH && !!ctx.mobile
   return page in PAGES
 }
 

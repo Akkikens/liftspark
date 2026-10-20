@@ -116,23 +116,23 @@ describe('Library header count', () => {
   afterEach(() => _setLangState('en', {}, null, null))
 
   it('shows only the catalogue while you have no exercises of your own', () => {
-    expect(sub(render())).toBe(`${EXDB.length} exercises`)
+    expect(sub(render())).toBe(`${EXDB.length.toLocaleString('en')} exercises · ${EXDB.filter(e => e.img).length.toLocaleString('en')} with pictures`)
   })
 
   it('adds "+ 1 of your own" for a single custom exercise', () => {
     mocks.S.customEx = own(1)
-    expect(sub(render())).toBe(`${EXDB.length} animated exercises + 1 of your own`)
+    expect(sub(render())).toBe(`${EXDB.length} exercises + 1 of your own`)
   })
 
   it('adds the count for several custom exercises', () => {
     mocks.S.customEx = own(5)
-    expect(sub(render())).toBe(`${EXDB.length} animated exercises + 5 of your own`)
+    expect(sub(render())).toBe(`${EXDB.length} exercises + 5 of your own`)
   })
 
   it('uses the language\'s own plural forms (Russian: 1 своё, 2 своих, 5 своих)', async () => {
     const { default: ru } = await import('../locales/ru.js')
     _setLangState('ru', ru, null, null)
-    const forms = ru['{1} animated exercises + {0} of your own']
+    const forms = ru['{1} exercises + {0} of your own']
     expect(typeof forms).toBe('object')
     mocks.S.customEx = own(1)
     const one = sub(render())
