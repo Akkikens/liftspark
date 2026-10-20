@@ -17,7 +17,18 @@ import CoreBluetooth
  *          "state" { state: "off" | "unauthorized" | "idle" | "scanning" | "connecting" | "connected", id?, name?, battery? }
  */
 @objc(HeartRateBLEPlugin)
-public class HeartRateBLEPlugin: CAPPlugin, CBCentralManagerDelegate, CBPeripheralDelegate {
+public class HeartRateBLEPlugin: CAPPlugin, CAPBridgedPlugin, CBCentralManagerDelegate, CBPeripheralDelegate {
+    public let identifier = "HeartRateBLEPlugin"
+    public let jsName = "HeartRateBLE"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "scan", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "stopScan", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "connect", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "disconnect", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "forget", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "status", returnType: CAPPluginReturnPromise),
+    ]
+
     private static let hrService = CBUUID(string: "180D")
     private static let hrMeasurement = CBUUID(string: "2A37")
     private static let batteryService = CBUUID(string: "180F")

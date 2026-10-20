@@ -957,6 +957,8 @@ function SettingsRoot({ ctx, preview, open, user, sync, home, go }) {
         </button>
       </Section>
       <Section>
+        <Row icon="bolt" iconTint="var(--spark)" title={t('Connect your wearable')} subtitle={t('Apple Watch, WHOOP, Garmin, Oura, heart-rate straps')}
+          accessory="chevron" onClick={() => nav('/connect')} className="sp-root-row" />
         <Row icon="heart" iconTint="var(--z5)" title={t('Devices & Health')} subtitle={t('Heart rate, Apple Health, Strava, WHOOP, Oura')}
           accessory="chevron" onClick={() => nav('/devices')} className="sp-root-row" />
       </Section>

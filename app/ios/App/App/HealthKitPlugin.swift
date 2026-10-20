@@ -14,7 +14,23 @@ import UIKit
  * Workouts are written as HKWorkout objects; Strava's iOS app imports those from Health.
  */
 @objc(HealthKitPlugin)
-public class HealthKitPlugin: CAPPlugin {
+public class HealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "HealthKitPlugin"
+    public let jsName = "HealthConnect"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "status", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "requestPermissions", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "openSettings", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "write", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "remove", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "today", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "heartRate", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "activeEnergy", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "saveDietaryEnergy", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "startLiveHeartRate", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "stopLiveHeartRate", returnType: CAPPluginReturnPromise),
+    ]
+
     private let store = HKHealthStore()
     private var liveQuery: HKAnchoredObjectQuery?
     private var session: AnyObject?   // HKWorkoutSession on iOS 26+, kept untyped for older targets

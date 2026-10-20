@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import TodayCard from '../components/TodayCard.jsx'
+import { WearableHomeCard } from '../components/Wearables.jsx'
 import { useStore } from '../store/useStore.js'
 import { effectiveRoutines, effectiveRoutineIds, nextTrainingDay, streakWeeks, lastBW, setsDoneActive } from '../lib/history.js'
 import { fmtNum, fmtDate, todayISO, isoOf, weekStartOf, weekDayOffset, DAYS, DAYN } from '../lib/format.js'
@@ -108,7 +109,10 @@ export default function Home() {
       <button className="iconbtn" onClick={() => nav('/settings')} aria-label={trouble ? t('Settings') + ', ' + t('Connection problem') : t('Settings')}><Icon name="gear" />{trouble && <span className="tab-dot" aria-hidden="true" />}</button>
     </div>
 
-    <TodayCard />
+    <WearableHomeCard nav={nav} />
+    {/* Today's strain and calories only once there is something to show: an empty card of dashes
+        on a first launch says nothing. */}
+    {((S.workouts || []).length > 0 || !!S.lsWearable?.kind) && <TodayCard />}
     <div className="card">
       {/* A coach week runs by order, not by weekday, so its progress row stands in for the
           seven dots (components/QueueRow.jsx). The today row below stays as it is: the queue's

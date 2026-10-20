@@ -29,6 +29,7 @@ import TimerFlash from './components/TimerFlash.jsx'
 import { openDeviceLinkRedeem } from './components/Passkeys.jsx'
 import Login from './views/Login.jsx'
 import MobileOnboarding from './views/MobileOnboarding.jsx'
+import Connect from './views/Connect.jsx'
 import Home from './views/Home.jsx'
 import CheckIn from './views/CheckIn.jsx'
 import Plan from './views/Plan.jsx'
@@ -222,6 +223,7 @@ function Shell() {
               <Route path="/measurements" element={<Measurements />} />
               <Route path="/fuel" element={<Fuel />} />
               <Route path="/devices" element={<Devices />} />
+              <Route path="/connect" element={<Connect />} />
               <Route path="/settings" element={<SettingsRoute />} />
               <Route path="/settings/:page" element={<SettingsRoute />} />
               {/* The Coach screens gate themselves on the instance config; the routes exist

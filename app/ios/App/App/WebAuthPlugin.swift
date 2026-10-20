@@ -12,7 +12,13 @@ import AuthenticationServices
  * tokens on the backend, which holds the client secrets.
  */
 @objc(WebAuthPlugin)
-public class WebAuthPlugin: CAPPlugin, ASWebAuthenticationPresentationContextProviding {
+public class WebAuthPlugin: CAPPlugin, CAPBridgedPlugin, ASWebAuthenticationPresentationContextProviding {
+    public let identifier = "WebAuthPlugin"
+    public let jsName = "WebAuth"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "authenticate", returnType: CAPPluginReturnPromise),
+    ]
+
     private var session: ASWebAuthenticationSession?
 
     @objc func authenticate(_ call: CAPPluginCall) {

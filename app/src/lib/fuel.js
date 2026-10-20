@@ -71,10 +71,15 @@ export function totals(entries) {
   return (entries || []).reduce((a, e) => ({ kcal: a.kcal + (e.kcal || 0), p: r1(a.p + (e.p || 0)), c: r1(a.c + (e.c || 0)), f: r1(a.f + (e.f || 0)) }), { kcal: 0, p: 0, c: 0, f: 0 })
 }
 
-/** Mifflin–St Jeor resting energy, kcal/day. */
+/**
+ * Mifflin–St Jeor resting energy, kcal/day. The formula has a male (+5) and a female (−161)
+ * constant; without a sex given ("prefer not to say", intersex, non-binary) the average of the two
+ * (−78) is used, which sits within about 4 % of either.
+ */
+export const SEX_CONSTANT = { male: 5, female: -161, other: -78 }
 export function bmr({ kg, cm, age, sex }) {
   if (!(kg > 0 && cm > 0 && age > 0)) return 0
-  return Math.round(10 * kg + 6.25 * cm - 5 * age + (sex === 'female' ? -161 : 5))
+  return Math.round(10 * kg + 6.25 * cm - 5 * age + (SEX_CONSTANT[sex] ?? SEX_CONSTANT.other))
 }
 
 /** The daily calorie goal: the user's own number, else Mifflin × activity ± objective. */

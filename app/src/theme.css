@@ -193,3 +193,44 @@ h2, h3, .sec-h, .card-h, .sheet-title, .modal-title {
 /* openGym's pill buttons and accent fills pick up the spark too. */
 .btn.primary.pill { font-size: 16px }
 .btn.primary:disabled { opacity: .45; filter: none }
+
+/* Wearables: picker tiles, scanner, Home card and chip */
+.ls-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
+.ls-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; text-align: start; padding: 16px 14px; min-height: 132px;
+  background: var(--surface); border: 1px solid var(--sep); border-radius: var(--r-card); color: var(--label); font: inherit;
+  transition: transform var(--fast) var(--ease), border-color var(--fast) var(--ease) }
+.ls-tile:active { transform: scale(.97) }
+.ls-tile:last-child:nth-child(odd) { grid-column: 1 / -1; min-height: 0 }
+.ls-tile-ic { display: inline-flex; width: 44px; height: 44px; border-radius: 14px; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--spark) 16%, transparent); color: var(--spark) }
+.ls-tile-n { font-family: var(--font-display); font-weight: 700; font-size: 21px; line-height: 1.05 }
+.ls-tile-s { color: var(--label-2); font-size: 13px; line-height: 1.35 }
+.ls-back { display: inline-flex; align-items: center; gap: 4px; background: none; border: 0; color: var(--spark); font: inherit; font-weight: 600; padding: 4px 0 12px }
+.ls-flow { display: grid; gap: 14px }
+.ls-flow-head { display: flex; gap: 12px; align-items: center }
+.ls-flow-head h2 { font-family: var(--font-display); font-size: 28px; margin: 0; line-height: 1 }
+.ls-steps { margin: 0; padding: 14px 14px 14px 34px; background: var(--surface); border-radius: var(--r-card); display: grid; gap: 8px; color: var(--label-2); line-height: 1.45 }
+.ls-steps li::marker { color: var(--spark); font-weight: 700 }
+.ls-scan { display: grid; gap: 10px }
+.ls-scan-btn { width: 100%; display: inline-flex; justify-content: center; align-items: center; gap: 10px }
+.ls-found { display: grid; gap: 8px }
+.ls-found .ls-li { background: var(--surface); border-radius: var(--r); padding: 10px 12px; gap: 10px }
+.ls-paired { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--surface); border-radius: var(--r-card); border: 1px solid var(--sep) }
+.ls-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--label-3); flex: none }
+.ls-dot.on { background: var(--green); box-shadow: 0 0 0 4px color-mix(in srgb, var(--green) 22%, transparent) }
+.ls-signal { display: inline-flex; align-items: flex-end; gap: 2px; height: 16px }
+.ls-signal i { width: 4px; border-radius: 1px; background: var(--label-3) }
+.ls-signal i.on { background: var(--green) }
+.ls-radar { width: 14px; height: 14px; border-radius: 50%; border: 2px solid currentColor; animation: ls-radar 1.2s var(--ease) infinite }
+@keyframes ls-radar { 0% { transform: scale(.5); opacity: 1 } 100% { transform: scale(1.4); opacity: 0 } }
+.ls-wear-card { position: relative; display: grid; gap: 6px; width: 100%; text-align: start; margin: 0 0 14px; padding: 18px; border: 0; border-radius: var(--r-xl);
+  color: #fff; font: inherit; background: var(--spark-grad); box-shadow: 0 14px 34px -12px rgba(255,60,90,.55); overflow: hidden }
+.ls-wear-glyphs { display: flex; gap: 10px; opacity: .9 }
+.ls-wear-t { font-family: var(--font-display); font-weight: 800; font-size: 28px; line-height: 1 }
+.ls-wear-s { font-size: 14px; line-height: 1.4; opacity: .92; max-width: 32ch }
+.ls-wear-cta { display: inline-flex; align-items: center; gap: 2px; justify-self: start; margin-top: 6px; padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,.2); font-weight: 700 }
+.ls-wear-chip { display: flex; align-items: center; gap: 10px; width: 100%; margin: 0 0 12px; padding: 10px 14px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--sep); color: var(--label); font: inherit; text-align: start }
+.ls-wear-chip-n { flex: 1; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.ls-wear-bpm { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-display); font-weight: 700; font-size: 20px; color: var(--z5) }
+@media (prefers-reduced-motion: reduce) { .ls-radar { animation: none } .ls-tile { transition: none } }

@@ -10,6 +10,7 @@ import { backendConfig, isConnected, connect, disconnect } from '../lib/integrat
 import { maxHrOf } from '../lib/strain.js'
 import { Switch } from '../components/ui.jsx'
 import Icon from '../components/Icon.jsx'
+import { HRScanner } from '../components/Wearables.jsx'
 
 // Settings → Devices & Health: live heart rate sensors, Apple Health, Strava, WHOOP, Oura, and the
 // body details the calorie and strain maths use.
@@ -30,43 +31,13 @@ export default function Devices() {
 }
 
 function HeartRateSensor() {
-  const bleState = useHeart(s => s.bleState), name = useHeart(s => s.bleName), battery = useHeart(s => s.battery)
-  const bpm = useHeart(s => s.bpm), at = useHeart(s => s.t), source = useHeart(s => s.source)
-  const [found, setFound] = useState([])
-  const [scanning, setScanning] = useState(false)
-  const [native, setNative] = useState(true)
-  const toast = useUI(s => s.toast)
-
-  useEffect(() => {
-    initHeart()
-    isIOSApp().then(setNative)
-    const off = listen('ble', 'device', d => setFound(list => list.some(x => x.id === d.id) ? list : [...list, d]))
-    return () => { off(); ble.stopScan() }
-  }, [])
-
-  const scan = async () => { setFound([]); setScanning(true); await ble.scan(); setTimeout(() => { setScanning(false); ble.stopScan() }, 20000) }
-  const pick = async d => { try { await ble.connect(d.id); setScanning(false); toast(t('Connecting to {0}…', d.name)) } catch (e) { toast(e?.message || t('Couldn’t connect')) } }
-  const connected = bleState === 'connected'
-  const live = isFresh(at) && source === 'ble'
-
+  const nav = useNavigate()
   return <>
     <div className="ls-h">{t('Live heart rate')}</div>
-    <div className="ls-card">
-      {name ? <div className="ls-row" style={{ justifyContent: 'space-between' }}>
-        <div>
-          <div style={{ fontWeight: 700 }}>{name}</div>
-          <div className="ls-sub">{connected ? (live ? t('{0} bpm now', bpm) : t('Connected')) : bleState === 'connecting' ? t('Reconnecting…') : t('Not connected')}{battery != null ? ' · ' + t('battery {0}%', battery) : ''}</div>
-        </div>
-        <button className="ls-btn" onClick={() => ble.forget()}>{t('Forget')}</button>
-      </div> : <div className="ls-note">{t('Works with any Bluetooth heart-rate sensor: chest straps (Polar, Wahoo, Garmin HRM), WHOOP with “Broadcast Heart Rate” turned on, Garmin watches with “Broadcast Heart Rate”, and more. Apple Watch heart rate comes through Apple Health below.')}</div>}
-      <div style={{ height: 12 }} />
-      <button className="ls-btn full" onClick={scan} disabled={!native || scanning}>{!native ? t('Available in the iPhone app') : scanning ? t('Searching…') : name ? t('Pair a different sensor') : t('Find my sensor')}</button>
-      {found.length > 0 && <div className="ls-list" style={{ marginTop: 10 }}>
-        {found.map(d => <button key={d.id} className="ls-li" style={{ textAlign: 'start', width: '100%' }} onClick={() => pick(d)}>
-          <Icon name="heart" /><span style={{ flex: 1, fontWeight: 600 }}>{d.name}</span><span className="ls-sub">{d.rssi ? d.rssi + ' dBm' : ''}</span>
-        </button>)}
-      </div>}
-      {scanning && !found.length && <div className="ls-sub" style={{ marginTop: 10 }}>{t('Wear the strap (or start broadcasting on your watch) and keep it close.')}</div>}
+    <div className="ls-card" style={{ display: 'grid', gap: 10 }}>
+      <button className="ls-btn full" onClick={() => nav('/connect')}>{t('Connect your wearable')}</button>
+      <div className="ls-note">{t('Any Bluetooth heart-rate sensor: chest straps (Polar, Wahoo, Garmin HRM), WHOOP or Garmin with “Broadcast Heart Rate” on, and more.')}</div>
+      <HRScanner />
     </div>
   </>
 }

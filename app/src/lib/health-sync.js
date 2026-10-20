@@ -8,7 +8,7 @@
 //
 // The web build never gets here (MOBILE is a build-time flag), and iOS answers 'unsupported'.
 import { MOBILE, isAndroid, readJsonFile, writeJsonFile } from './mobile.js'
-import { isIOSApp } from './ls-native.js'
+import { isIOSApp, plugins } from './ls-native.js'
 import { healthRecords, planSync, writtenIds } from './health-connect.js'
 import { exerciseNameFor } from './i18n-core.js'
 import { EXIDX } from './exercises.js'
@@ -23,6 +23,9 @@ let pluginP = null
 const plugin = () => pluginP || (pluginP = (async () => {
   // Android: openGym's Health Connect plugin. iOS: Liftspark's HealthKit plugin under the same name.
   if (!(await isAndroid()) && !(await isIOSApp())) return null
+  // One proxy per plugin name: Capacitor warns (and keeps the first) when a name is registered twice.
+  const native = await plugins()
+  if (native?.health) return { HC: native.health }
   const { registerPlugin } = await import('@capacitor/core')
   return { HC: registerPlugin('HealthConnect') }
 })().catch(() => null))

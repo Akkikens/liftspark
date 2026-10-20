@@ -23,6 +23,7 @@
 		AA0100000000000000000016 /* WebAuthPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000000000000015 /* WebAuthPlugin.swift */; };
 		AA0100000000000000000018 /* LiftsparkPlugins.m in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000000000000017 /* LiftsparkPlugins.m */; };
 		AA010000000000000000001B /* ScannerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA010000000000000000001A /* ScannerPlugin.swift */; };
+		AA010000000000000000002B /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA010000000000000000002A /* MainViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 		AA0100000000000000000015 /* WebAuthPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAuthPlugin.swift; sourceTree = "<group>"; };
 		AA0100000000000000000017 /* LiftsparkPlugins.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LiftsparkPlugins.m; sourceTree = "<group>"; };
 		AA0100000000000000000019 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
+		AA010000000000000000002A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		AA010000000000000000001A /* ScannerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerPlugin.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -99,6 +101,7 @@
 				AA0100000000000000000017 /* LiftsparkPlugins.m */,
 				AA0100000000000000000019 /* App.entitlements */,
 				AA010000000000000000001A /* ScannerPlugin.swift */,
+				AA010000000000000000002A /* MainViewController.swift */,
 				AA0100000000000000000001 /* PrintPlugin.swift */,
 				AA0100000000000000000003 /* PrintPlugin.m */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
@@ -242,6 +245,7 @@
 				AA0100000000000000000016 /* WebAuthPlugin.swift in Sources */,
 				AA0100000000000000000018 /* LiftsparkPlugins.m in Sources */,
 				AA010000000000000000001B /* ScannerPlugin.swift in Sources */,
+				AA010000000000000000002B /* MainViewController.swift in Sources */,
 				AA0100000000000000000002 /* PrintPlugin.swift in Sources */,
 				AA0100000000000000000004 /* PrintPlugin.m in Sources */,
 			);

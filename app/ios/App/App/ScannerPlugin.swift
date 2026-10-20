@@ -12,7 +12,14 @@ import UIKit
  *   readImage({ path }) → { value, format } | {}                    a picture already on the phone
  */
 @objc(ScannerPlugin)
-public class ScannerPlugin: CAPPlugin {
+public class ScannerPlugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "ScannerPlugin"
+    public let jsName = "Scanner"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "scan", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "readImage", returnType: CAPPluginReturnPromise),
+    ]
+
 
     @objc func scan(_ call: CAPPluginCall) {
         let start = {
