@@ -3,7 +3,7 @@ import { HashRouter, Routes, Route, Navigate, useNavigate, useLocation, useNavig
 import { useStore } from './store/useStore.js'
 import { useUI } from './store/useUI.js'
 import { bindUI } from './components/ui.jsx'
-import { setWeightDecimals } from './lib/format.js'
+import { setWeightDecimals, todayISO } from './lib/format.js'
 import { accentValue, applyAccent } from './lib/accent.js'
 import { setLang, useLang, baseLang } from './lib/i18n.js'
 import { effectiveLang } from './lib/default-lang.js'
@@ -17,7 +17,8 @@ import { installViewportGuard } from './lib/viewport-guard.js'
 import { installChipDrag } from './lib/hchips.js'
 import { syncPushSubscription } from './lib/push.js'
 import { MOBILE } from './lib/mobile.js'
-import { exitWorkoutEdit, startFlow } from './sheets.jsx'
+import { exitWorkoutEdit, startFlow, beginWorkout } from './sheets.jsx'
+import { effectiveRoutineIds } from './lib/history.js'
 import Icon from './components/Icon.jsx'
 import TabBar from './components/TabBar.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
@@ -91,6 +92,12 @@ function Shell() {
   const onboarding = (needsMobileOnboarding && !S.lsOnboarded) || S.lsOnboarding?.step != null
   const langV = useLang()   // re-renders the whole shell when the language (pack) changes
   useEffect(() => { setNav(navigate) }, [navigate])
+  // A workout started on the Apple Watch with none running here: start today's plan (or freestyle).
+  useEffect(() => {
+    const on = () => { const st = useStore.getState().S; if (!st.active) beginWorkout(effectiveRoutineIds(st, todayISO()), null) }
+    window.addEventListener('ls-watch-start', on)
+    return () => window.removeEventListener('ls-watch-start', on)
+  }, [])
   const lastEditPath = useRef(loc.pathname)
   // Any in-app route exit, browser back included, returns to the persisted draft and asks for a
   // save decision. Reload needs no prompt because the draft itself is already in local storage.

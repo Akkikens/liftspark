@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useId, useRef, useState } from 'react'
+import { nextSet } from '../lib/ls-watch.js'
 import SwipeCards from '../components/SwipeCards.jsx'
 import SwipeRow from '../components/SwipeRow.jsx'
 import { useNavigate } from 'react-router-dom'
@@ -1741,6 +1742,27 @@ function ActiveWorkout() {
       onFocusProgress?.({ unitDone: freshUnitDone })
     }
   }
+  // A set logged on the Apple Watch (lib/ls-watch.js): its weight and reps go into the next open
+  // set of the current exercise, which is then ticked the same way as a tap here.
+  const toggleRef = useRef(toggle)
+  toggleRef.current = toggle
+  useEffect(() => {
+    const on = ev => {
+      const n = nextSet(useStore.getState().S.active)
+      if (!n) return
+      const { weight, reps } = ev.detail || {}
+      update(s => {
+        const row = s.active?.entries?.[n.idx]?.sets?.[n.i]
+        if (!row) return
+        if (Number.isFinite(weight)) row.w = weight
+        if (Number.isFinite(reps)) row.r = reps
+      })
+      toggleRef.current(n.idx, n.i)
+    }
+    window.addEventListener('ls-watch-set', on)
+    return () => window.removeEventListener('ls-watch-set', on)
+  }, [])
+
 
   // After the finished exercise folded away (toggle, above): the new current one is the next thing
   // to do, so if it now sits under the header or low on the screen with little more than its title

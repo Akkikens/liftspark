@@ -1,4 +1,5 @@
 import { StrictMode } from 'react'
+import { initWatch } from './lib/ls-watch.js'
 import { initICloud } from './lib/ls-icloud.js'
 import { onAppActive } from './lib/mobile.js'
 import { initLive } from './lib/ls-live.js'
@@ -39,3 +40,4 @@ if (!MOBILE && 'serviceWorker' in navigator && location.protocol === 'https:') {
 initHeart()
 initLive()
 initICloud(onAppActive)
+initWatch()

@@ -13,5 +13,6 @@ class MainViewController: CAPBridgeViewController {
         bridge?.registerPluginInstance(PrintPlugin())
         bridge?.registerPluginInstance(LiveActivityPlugin())
         bridge?.registerPluginInstance(CloudSyncPlugin())
+        bridge?.registerPluginInstance(WatchPlugin())
     }
 }
