@@ -7,16 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1420F1BF8E2D54A36394FCC3 /* LiftsparkWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04727DC3CD88349EFD52748E /* LiftsparkWidgets.swift */; };
 		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
-		AA010000000000000000003B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = AA010000000000000000003A /* PrivacyInfo.xcprivacy */; };
+		38086415BE6193248C0FD410 /* ActivityKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7310A8F908B8E01A212034F0 /* ActivityKit.framework */; };
 		50379B232058CBB4000EE86E /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50379B222058CBB4000EE86E /* capacitor.config.json */; };
 		504EC3081FED79650016851F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
-		AA0000000000000000000002 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000001 /* SceneDelegate.swift */; };
 		504EC30D1FED79650016851F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30B1FED79650016851F /* Main.storyboard */; };
 		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
+		78901409E67484CE6BD0E27E /* WorkoutActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F1835FD6963E4078EB3F8F /* WorkoutActivity.swift */; };
+		820F2C2142F92B607D749DC4 /* LiveActivityPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74033539F90E56A14BAA364F /* LiveActivityPlugin.swift */; };
+		822E0C4BE0C3BDBB9FCD979F /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AA3C3DE9BF10753B2986022 /* SwiftUI.framework */; };
+		85F97A3E2092FCACCE5F3E3E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C21491D32D2DF9B78C7FB255 /* WidgetKit.framework */; };
+		9200EFFBC3508C5904882BD9 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C21491D32D2DF9B78C7FB255 /* WidgetKit.framework */; };
+		95AC56310F785A84AA6614D1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4B4EED41957E5709C70CA34 /* Foundation.framework */; };
+		9EF4F592701BDA8673E09B33 /* WorkoutActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F1835FD6963E4078EB3F8F /* WorkoutActivity.swift */; };
 		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
+		AA0000000000000000000002 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000001 /* SceneDelegate.swift */; };
 		AA0100000000000000000002 /* PrintPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000000000000001 /* PrintPlugin.swift */; };
 		AA0100000000000000000004 /* PrintPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000000000000003 /* PrintPlugin.m */; };
 		AA0100000000000000000012 /* HealthKitPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000000000000011 /* HealthKitPlugin.swift */; };
@@ -25,32 +33,69 @@
 		AA0100000000000000000018 /* LiftsparkPlugins.m in Sources */ = {isa = PBXBuildFile; fileRef = AA0100000000000000000017 /* LiftsparkPlugins.m */; };
 		AA010000000000000000001B /* ScannerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA010000000000000000001A /* ScannerPlugin.swift */; };
 		AA010000000000000000002B /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA010000000000000000002A /* MainViewController.swift */; };
+		AA010000000000000000003B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = AA010000000000000000003A /* PrivacyInfo.xcprivacy */; };
+		B7FCD932D674326870039013 /* LiftsparkWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AE0A711EA23C8CD306AFCDD4 /* LiftsparkWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		ED99DB677C279083327D496B /* ActivityKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7310A8F908B8E01A212034F0 /* ActivityKit.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		ABAC6BFAE127981F604B7EA6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 030E5E3B9CFFECADC6137AD7;
+			remoteInfo = LiftsparkWidgets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4E92A3064891D50D05533C30 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B7FCD932D674326870039013 /* LiftsparkWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		AA010000000000000000003A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		03B7AE46B10FA34668796EA7 /* LiftsparkWidgets.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = LiftsparkWidgets.entitlements; sourceTree = "<group>"; };
+		04727DC3CD88349EFD52748E /* LiftsparkWidgets.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LiftsparkWidgets.swift; sourceTree = "<group>"; };
 		2FAD9762203C412B000D30F8 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
 		50379B222058CBB4000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
 		504EC3041FED79650016851F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		504EC3071FED79650016851F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		AA0000000000000000000001 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		AA0100000000000000000001 /* PrintPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrintPlugin.swift; sourceTree = "<group>"; };
-		AA0100000000000000000003 /* PrintPlugin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PrintPlugin.m; sourceTree = "<group>"; };
 		504EC30C1FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		504EC30E1FED79650016851F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		504EC3111FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		504EC3131FED79650016851F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
-		AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
-		FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
+		59F1835FD6963E4078EB3F8F /* WorkoutActivity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutActivity.swift; sourceTree = "<group>"; };
+		7310A8F908B8E01A212034F0 /* ActivityKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ActivityKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/ActivityKit.framework; sourceTree = DEVELOPER_DIR; };
+		74033539F90E56A14BAA364F /* LiveActivityPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LiveActivityPlugin.swift; sourceTree = "<group>"; };
+		9AA3C3DE9BF10753B2986022 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
+		AA0000000000000000000001 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		AA0100000000000000000001 /* PrintPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrintPlugin.swift; sourceTree = "<group>"; };
+		AA0100000000000000000003 /* PrintPlugin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PrintPlugin.m; sourceTree = "<group>"; };
 		AA0100000000000000000011 /* HealthKitPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitPlugin.swift; sourceTree = "<group>"; };
 		AA0100000000000000000013 /* HeartRateBLEPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartRateBLEPlugin.swift; sourceTree = "<group>"; };
 		AA0100000000000000000015 /* WebAuthPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAuthPlugin.swift; sourceTree = "<group>"; };
 		AA0100000000000000000017 /* LiftsparkPlugins.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LiftsparkPlugins.m; sourceTree = "<group>"; };
 		AA0100000000000000000019 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
-		AA010000000000000000002A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		AA010000000000000000001A /* ScannerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerPlugin.swift; sourceTree = "<group>"; };
+		AA010000000000000000002A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		AA010000000000000000003A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		AE0A711EA23C8CD306AFCDD4 /* LiftsparkWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LiftsparkWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
+		C21491D32D2DF9B78C7FB255 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/WidgetKit.framework; sourceTree = DEVELOPER_DIR; };
+		CE99C062EA587381EBB5A8D4 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E4B4EED41957E5709C70CA34 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +104,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */,
+				ED99DB677C279083327D496B /* ActivityKit.framework in Frameworks */,
+				9200EFFBC3508C5904882BD9 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D686BCE70FB382AA05F2997D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				95AC56310F785A84AA6614D1 /* Foundation.framework in Frameworks */,
+				85F97A3E2092FCACCE5F3E3E /* WidgetKit.framework in Frameworks */,
+				822E0C4BE0C3BDBB9FCD979F /* SwiftUI.framework in Frameworks */,
+				38086415BE6193248C0FD410 /* ActivityKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,8 +127,29 @@
 			isa = PBXGroup;
 			children = (
 				AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */,
+				B299B4051C425A821B43EE72 /* iOS */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		356F7051C4B1CBD189E5BBBE /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				59F1835FD6963E4078EB3F8F /* WorkoutActivity.swift */,
+			);
+			name = Shared;
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		4FB79600661CCA7447257109 /* LiftsparkWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				04727DC3CD88349EFD52748E /* LiftsparkWidgets.swift */,
+				CE99C062EA587381EBB5A8D4 /* Info.plist */,
+				03B7AE46B10FA34668796EA7 /* LiftsparkWidgets.entitlements */,
+			);
+			name = LiftsparkWidgets;
+			path = LiftsparkWidgets;
 			sourceTree = "<group>";
 		};
 		504EC2FB1FED79650016851F = {
@@ -80,6 +159,8 @@
 				504EC3051FED79650016851F /* Products */,
 				7F8756D8B27F46E3366F6CEA /* Pods */,
 				27E2DDA53C4D2A4D1A88CE4A /* Frameworks */,
+				356F7051C4B1CBD189E5BBBE /* Shared */,
+				4FB79600661CCA7447257109 /* LiftsparkWidgets */,
 			);
 			sourceTree = "<group>";
 		};
@@ -87,6 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				504EC3041FED79650016851F /* App.app */,
+				AE0A711EA23C8CD306AFCDD4 /* LiftsparkWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -113,6 +195,7 @@
 				2FAD9762203C412B000D30F8 /* config.xml */,
 				AA010000000000000000003A /* PrivacyInfo.xcprivacy */,
 				50B271D01FEDC1A000F3C39B /* public */,
+				74033539F90E56A14BAA364F /* LiveActivityPlugin.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -126,9 +209,37 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		B299B4051C425A821B43EE72 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				7310A8F908B8E01A212034F0 /* ActivityKit.framework */,
+				C21491D32D2DF9B78C7FB255 /* WidgetKit.framework */,
+				E4B4EED41957E5709C70CA34 /* Foundation.framework */,
+				9AA3C3DE9BF10753B2986022 /* SwiftUI.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		030E5E3B9CFFECADC6137AD7 /* LiftsparkWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1306B902800EC1A3D302C8C7 /* Build configuration list for PBXNativeTarget "LiftsparkWidgets" */;
+			buildPhases = (
+				B30EC38B4CF826B3675FB36E /* Sources */,
+				D686BCE70FB382AA05F2997D /* Frameworks */,
+				234F30B140972CACC09CC20D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LiftsparkWidgets;
+			productName = LiftsparkWidgets;
+			productReference = AE0A711EA23C8CD306AFCDD4 /* LiftsparkWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		504EC3031FED79650016851F /* App */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 504EC3161FED79650016851F /* Build configuration list for PBXNativeTarget "App" */;
@@ -138,10 +249,12 @@
 				504EC3011FED79650016851F /* Frameworks */,
 				504EC3021FED79650016851F /* Resources */,
 				9592DBEFFC6D2A0C8D5DEB22 /* [CP] Embed Pods Frameworks */,
+				4E92A3064891D50D05533C30 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B0B3FA39F028D7A0FB914264 /* PBXTargetDependency */,
 			);
 			name = App;
 			productName = App;
@@ -173,18 +286,24 @@
 				Base,
 			);
 			mainGroup = 504EC2FB1FED79650016851F;
-			packageReferences = (
-			);
 			productRefGroup = 504EC3051FED79650016851F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				504EC3031FED79650016851F /* App */,
+				030E5E3B9CFFECADC6137AD7 /* LiftsparkWidgets */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		234F30B140972CACC09CC20D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		504EC3021FED79650016851F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -252,10 +371,30 @@
 				AA010000000000000000002B /* MainViewController.swift in Sources */,
 				AA0100000000000000000002 /* PrintPlugin.swift in Sources */,
 				AA0100000000000000000004 /* PrintPlugin.m in Sources */,
+				78901409E67484CE6BD0E27E /* WorkoutActivity.swift in Sources */,
+				820F2C2142F92B607D749DC4 /* LiveActivityPlugin.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B30EC38B4CF826B3675FB36E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1420F1BF8E2D54A36394FCC3 /* LiftsparkWidgets.swift in Sources */,
+				9EF4F592701BDA8673E09B33 /* WorkoutActivity.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B0B3FA39F028D7A0FB914264 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = LiftsparkWidgets;
+			target = 030E5E3B9CFFECADC6137AD7 /* LiftsparkWidgets */;
+			targetProxy = ABAC6BFAE127981F604B7EA6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		504EC30B1FED79650016851F /* Main.storyboard */ = {
@@ -277,6 +416,55 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		04B134830FD1338B14CBC5DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = LiftsparkWidgets/LiftsparkWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JFNPZ2JF6V;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LiftsparkWidgets/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.akkikens.liftspark.widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0A9D4D8241934ECF680C955E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = LiftsparkWidgets/LiftsparkWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JFNPZ2JF6V;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LiftsparkWidgets/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.akkikens.liftspark.widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
 		504EC3141FED79650016851F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -389,12 +577,11 @@
 			baseConfigurationReference = FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = App/Info.plist;
-				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				DEVELOPMENT_TEAM = JFNPZ2JF6V;
-				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0;
@@ -412,12 +599,11 @@
 			baseConfigurationReference = AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = App/Info.plist;
-				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				DEVELOPMENT_TEAM = JFNPZ2JF6V;
-				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0;
@@ -432,6 +618,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1306B902800EC1A3D302C8C7 /* Build configuration list for PBXNativeTarget "LiftsparkWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				04B134830FD1338B14CBC5DD /* Release */,
+				0A9D4D8241934ECF680C955E /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		504EC2FF1FED79650016851F /* Build configuration list for PBXProject "App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

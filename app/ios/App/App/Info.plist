@@ -40,6 +40,8 @@
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Liftspark connects to your heart-rate strap or watch (WHOOP, Garmin, Polar and others) to show live heart rate during workouts.</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSCameraUsageDescription</key>

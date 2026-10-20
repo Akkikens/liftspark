@@ -1,4 +1,5 @@
 import { StrictMode } from 'react'
+import { initLive } from './lib/ls-live.js'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import { MOBILE } from './lib/mobile.js'
@@ -34,3 +35,4 @@ if (!MOBILE && 'serviceWorker' in navigator && location.protocol === 'https:') {
 
 // Liftspark: listen for heart rate from a paired sensor or the watch from the start.
 initHeart()
+initLive()

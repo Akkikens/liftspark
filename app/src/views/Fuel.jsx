@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useStore } from '../store/useStore.js'
 import { useUI } from '../store/useUI.js'
-import { t, tn } from '../lib/i18n.js'
+import { t } from '../lib/i18n.js'
 import { todayISO } from '../lib/format.js'
 import { MEALS, MEAL_NAMES, searchFoods, entryFor, quickEntry, dayFood, totals, dailyGoal, macroGoals, addFood, removeFood, recentFoods, searchGeneric, foodByBarcodeCached, cacheBarcode, isFavourite, toggleFavourite, saveMeal, logSavedMeal, copyDay, mealTotals, goalSuggestion } from '../lib/fuel.js'
 import { BACKEND, backendConfig } from '../lib/integrations.js'
@@ -227,7 +227,7 @@ function AddFood({ meal, day, close }) {
         {meals.map(m => <button key={m.id} className="ls-li" style={{ textAlign: 'start', width: '100%' }} onClick={() => {
           let made = []; update(s => { made = logSavedMeal(s, day, meal, m) }); made.forEach(e => foodToHealth(e.id, e)); toast(t('Added {0}', m.name)); close()
         }}>
-          <div style={{ flex: 1 }}><div style={{ fontWeight: 600 }}>{m.name}</div><div className="ls-sub">{tn('{0} item', '{0} items', m.items.length)} · {m.items.reduce((a, x) => a + x.kcal, 0)} kcal</div></div>
+          <div style={{ flex: 1 }}><div style={{ fontWeight: 600 }}>{m.name}</div><div className="ls-sub">{m.items.length === 1 ? t('1 item') : t('{0} items', m.items.length)} · {m.items.reduce((a, x) => a + x.kcal, 0)} kcal</div></div>
           <Icon name="plus" />
         </button>)}
       </>}

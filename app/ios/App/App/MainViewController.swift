@@ -11,5 +11,6 @@ class MainViewController: CAPBridgeViewController {
         bridge?.registerPluginInstance(WebAuthPlugin())
         bridge?.registerPluginInstance(ScannerPlugin())
         bridge?.registerPluginInstance(PrintPlugin())
+        bridge?.registerPluginInstance(LiveActivityPlugin())
     }
 }
