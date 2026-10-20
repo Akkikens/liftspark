@@ -15,7 +15,7 @@ import { backendConfig, isConnected, connect, disconnect } from '../lib/integrat
 import Icon from './Icon.jsx'
 
 export const KINDS = [
-  { id: 'watch', name: 'Apple Watch', sub: 'Live heart rate and calories through Apple Health', glyph: 'watch' },
+  { id: 'watch', name: 'Apple Watch', sub: 'Heart rate, workouts and calories through Apple Health', glyph: 'watch' },
   { id: 'whoop', name: 'WHOOP', sub: 'Live heart rate by Broadcast; recovery and sleep by sign-in', glyph: 'band' },
   { id: 'garmin', name: 'Garmin', sub: 'Live heart rate by Broadcast; history through Apple Health', glyph: 'watch' },
   { id: 'oura', name: 'Oura', sub: 'Sleep, readiness and resting heart rate', glyph: 'ring' },

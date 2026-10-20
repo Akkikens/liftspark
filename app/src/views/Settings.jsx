@@ -959,6 +959,8 @@ function SettingsRoot({ ctx, preview, open, user, sync, home, go }) {
       <Section>
         <Row icon="bolt" iconTint="var(--spark)" title={t('Connect your wearable')} subtitle={t('Apple Watch, WHOOP, Garmin, Oura, heart-rate straps')}
           accessory="chevron" onClick={() => nav('/connect')} className="sp-root-row" />
+        <Row icon="sparkles" iconTint="var(--orange)" title={t('Redo onboarding')} subtitle={t('Goal, body, calorie target and a fresh starter plan')}
+          accessory="chevron" onClick={() => useStore.getState().update(s => { s.lsOnboarding = { step: 1, a: {} } })} className="sp-root-row" />
         <Row icon="heart" iconTint="var(--z5)" title={t('Devices & Health')} subtitle={t('Heart rate, Apple Health, Strava, WHOOP, Oura')}
           accessory="chevron" onClick={() => nav('/devices')} className="sp-root-row" />
       </Section>

@@ -28,7 +28,7 @@ import RestTimer from './components/RestTimer.jsx'
 import TimerFlash from './components/TimerFlash.jsx'
 import { openDeviceLinkRedeem } from './components/Passkeys.jsx'
 import Login from './views/Login.jsx'
-import MobileOnboarding from './views/MobileOnboarding.jsx'
+import Onboarding from './views/Onboarding.jsx'
 import Connect from './views/Connect.jsx'
 import Home from './views/Home.jsx'
 import CheckIn from './views/CheckIn.jsx'
@@ -84,6 +84,9 @@ function Shell() {
   useEffect(() => { setAlarmBuzzer(MOBILE && S.vibrate !== false && S.vibrateOnSilent ? buzzAsAlarm : null) }, [S.vibrate, S.vibrateOnSilent])
   const isGuest = useStore(s => s.isGuest())
   const needsMobileOnboarding = useStore(s => s.needsMobileOnboarding)
+  // Liftspark's onboarding: a genuine first launch (until it is finished once), or one in progress,
+  // which is how it resumes after the app is closed halfway and how Settings → Redo onboarding works.
+  const onboarding = (needsMobileOnboarding && !S.lsOnboarded) || S.lsOnboarding?.step != null
   const langV = useLang()   // re-renders the whole shell when the language (pack) changes
   useEffect(() => { setNav(navigate) }, [navigate])
   const lastEditPath = useRef(loc.pathname)
@@ -188,7 +191,7 @@ function Shell() {
   }, [inWorkout])
   // The chat owns the bottom of the screen as well: its composer sits where the tabs would be.
   // The first-launch card has no tabs either: they changed the route behind it.
-  const noTabs = inWorkout || loc.pathname === '/coach' || needsMobileOnboarding
+  const noTabs = inWorkout || loc.pathname === '/coach' || needsMobileOnboarding || onboarding
 
   const authed = user || isGuest
   if (!ready && !authed) return (
@@ -205,7 +208,7 @@ function Shell() {
           re-mounts the boundary, so the tab bar is always a way out */}
       <div id="app" className="vfade" key={loc.pathname}>
         <ErrorBoundary>
-          {!authed ? <Login /> : needsMobileOnboarding ? <MobileOnboarding /> : (
+          {!authed ? <Login /> : onboarding ? <Onboarding /> : (
             <Routes>
               <Route path="/home" element={<Home />} />
               {/* Gym check-in — switched off in Settings, the route falls through to the
