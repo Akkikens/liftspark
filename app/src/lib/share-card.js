@@ -2,8 +2,8 @@
 // strain, time, calories, heart rate, zones and a body map of the muscles worked. Strava's API does
 // not take photos from other apps, so the card is shared through the iOS share sheet and added to
 // the post by hand, with the caption already on the clipboard.
-import { muscleMapSVG, LEVEL_COLORS } from './muscle-map.js'
 import { musclesWorked, muscleDots } from './strain.js'
+import { loadOfWorkouts, levelsOf, MUSCLES, INERT } from './muscles.js'
 import { stravaCaption } from './ls-workout.js'
 import { copyText } from './clipboard.js'
 import { MOBILE, shareExportBlob } from './mobile.js'
@@ -21,6 +21,23 @@ function loadImage(svg) {
 }
 
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1)
+const LEVEL_COLORS = ['#ffb057', '#ff6a2b', '#ff2f7d']
+// The finish screen's anatomical body map (components/BodyMap.jsx, MuscleMap geometry), as one
+// SVG with the front and back side by side, shaded l0–l4 in the spark colours.
+const SHADE = ['#2a3054', '#7a3f3a', '#c4502f', '#ff6a2b', '#ff2f7d']
+async function bodyMapSVG(load, body = 'male') {
+  const paths = (await import('./body-paths.js')).default
+  const g = paths[body] || paths.male
+  const lv = levelsOf(load)
+  const view = (v, dx) => {
+    const [, , vw, vh] = v.vb.split(/\s+/).map(Number)
+    const parts = INERT.flatMap(m => (v.p[m] || []).map(d => `<path d="${d}" fill="#1f2443"/>`))
+      .concat(MUSCLES.flatMap(m => (v.p[m] || []).map(d => `<path d="${d}" fill="${SHADE[lv[m] || 0]}"/>`)))
+    return { vw, vh, svg: `<svg x="${dx}" y="0" width="300" height="600" viewBox="${v.vb}">${parts.join('')}</svg>` }
+  }
+  const f = view(g.front, 0), b = view(g.back, 300)
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">${f.svg}${b.svg}</svg>`
+}
 
 export async function renderShareCard(w, S) {
   const ls = w.ls || {}
@@ -89,16 +106,16 @@ export async function renderShareCard(w, S) {
   }
 
   // Body map + top muscles.
-  const img = await loadImage(muscleMapSVG(load, { width: 600, labels: true }))
-  g.drawImage(img, 40, 760, 600, 630 * 600 / 600 * 0.84)
+  const img = await loadImage(await bodyMapSVG(loadOfWorkouts([w]), S?.body))
+  g.drawImage(img, 40, 760, 600, 530)
   const dots = muscleDots(load).slice(0, 6)
   g.font = display(40, 700)
   dots.forEach((m, i) => {
-    const y = 850 + i * 70
+    const y = 860 + i * 78
     g.fillStyle = '#f3f0e8'; g.fillText(cap(m.region), 680, y)
     for (let d = 0; d < 3; d++) {
       g.fillStyle = d < m.level ? LEVEL_COLORS[m.level - 1] : 'rgba(243,240,232,.15)'
-      g.beginPath(); g.arc(700 + d * 34, y + 24, 11, 0, Math.PI * 2); g.fill()
+      g.beginPath(); g.arc(692 + d * 32, y + 28, 10, 0, Math.PI * 2); g.fill()
     }
   })
 

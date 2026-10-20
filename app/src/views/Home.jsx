@@ -109,6 +109,19 @@ export default function Home() {
       <button className="iconbtn" onClick={() => nav('/settings')} aria-label={trouble ? t('Settings') + ', ' + t('Connection problem') : t('Settings')}><Icon name="gear" />{trouble && <span className="tab-dot" aria-hidden="true" />}</button>
     </div>
 
+    {/* No plan yet: setting one up comes first. */}
+    {!S.routines.length && !S.active && (
+      <div className="card">
+        <div className="row" style={{ gap: 10, marginBottom: 6 }}>
+          <span className="lrow-i"><Icon name="calendar" /></span>
+          <div className="big" style={{ fontSize: 22 }}>{t('Welcome!')}</div>
+        </div>
+        <div className="muted small" style={{ marginBottom: 12 }}>{t('Answer a few questions and get a plan built for your goal, schedule and equipment.')}</div>
+        <Button variant="primary" icon="sparkles" onClick={() => useStore.getState().update(s => { s.lsOnboarding = { step: 1, a: {} } })}>{t('Build my plan')}</Button>
+        <div style={{ height: 8 }} /><Button icon="clipboard" onClick={starterPlanSheet}>{t('Load starter plan')}</Button>
+        <div style={{ height: 8 }} /><Button onClick={() => nav('/plan')}>{t('Build my own plan')}</Button>
+      </div>
+    )}
     <WearableHomeCard nav={nav} />
     {/* Today's strain and calories only once there is something to show: an empty card of dashes
         on a first launch says nothing. */}
@@ -182,17 +195,6 @@ export default function Home() {
       </div>
     )}
 
-    {!S.routines.length && !S.active && (
-      <div className="card">
-        <div className="row" style={{ gap: 10, marginBottom: 6 }}>
-          <span className="lrow-i"><Icon name="calendar" /></span>
-          <div className="big" style={{ fontSize: 22 }}>{t('Welcome!')}</div>
-        </div>
-        <div className="muted small" style={{ marginBottom: 12 }}>{t('Set up your weekly routine to get going, or grab a ready-made starter plan.')}</div>
-        <Button variant="primary" icon="clipboard" onClick={starterPlanSheet}>{t('Load starter plan')}</Button>
-        <div style={{ height: 8 }} /><Button onClick={() => nav('/plan')}>{t('Build my own plan')}</Button>
-      </div>
-    )}
 
     {S.showWeightCard !== false && <div className="card">
       <div className="row between bw-head" style={{ marginBottom: 6 }}>

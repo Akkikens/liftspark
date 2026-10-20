@@ -29,7 +29,9 @@ export default function TodayCard() {
   const profile = S.lsProfile || {}
   const goal = dailyGoal(profile, bodyweightKg(S) || 75, ageOf(profile))
   const eaten = totals(dayFood(S, todayISO())).kcal
-  const last = [...(S.workouts || [])].reverse().find(w => w.ls)
+  // The last strain only while it is recent: a number from weeks ago reads as today's.
+  const last = [...(S.workouts || [])].reverse().find(w => w.ls && (w.end || w.start || 0) > Date.now() - 7 * 864e5)
+  const lastDay = last ? new Date(last.end || last.start).toLocaleDateString(undefined, { weekday: 'short' }) : null
   return <div className="ls-card" style={{ marginBottom: 12 }}>
     <div className="ls-row" style={{ gap: 16, alignItems: 'center' }}>
       <button onClick={() => nav('/fuel')} aria-label={t('Fuel')} style={{ flex: 'none' }}>
@@ -41,7 +43,7 @@ export default function TodayCard() {
       <div className="ls-grid2" style={{ flex: 1 }}>
         <div><div className="ls-v" style={{ fontSize: 26 }}>{h.activeKcal != null ? Math.round(h.activeKcal) : '–'}</div><div className="ls-k">{t('Active kcal')}</div></div>
         <div><div className="ls-v" style={{ fontSize: 26 }}>{h.steps != null ? Math.round(h.steps).toLocaleString() : '–'}</div><div className="ls-k">{t('Steps')}</div></div>
-        <div><div className="ls-v ls-spark-text" style={{ fontSize: 26 }}>{last?.ls?.strain ?? '–'}</div><div className="ls-k">{t('Last strain')}</div></div>
+        <div><div className="ls-v ls-spark-text" style={{ fontSize: 26 }}>{last?.ls?.strain ?? '–'}</div><div className="ls-k">{lastDay ? t('Strain · {0}', lastDay) : t('Last strain')}</div></div>
         <div>{ready
           ? <><div className="ls-v" style={{ fontSize: 26 }}>{ready.score ?? '–'}%</div><div className="ls-k">{ready.src} {ready.label}</div></>
           : <><div className="ls-v" style={{ fontSize: 26 }}>{h.restingHr ? Math.round(h.restingHr) : '–'}</div><div className="ls-k">{t('Resting HR')}</div></>}</div>

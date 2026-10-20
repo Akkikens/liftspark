@@ -30,6 +30,7 @@ import { openDeviceLinkRedeem } from './components/Passkeys.jsx'
 import Login from './views/Login.jsx'
 import Onboarding from './views/Onboarding.jsx'
 import Connect from './views/Connect.jsx'
+import Privacy from './views/Privacy.jsx'
 import Home from './views/Home.jsx'
 import CheckIn from './views/CheckIn.jsx'
 import Plan from './views/Plan.jsx'
@@ -227,6 +228,7 @@ function Shell() {
               <Route path="/fuel" element={<Fuel />} />
               <Route path="/devices" element={<Devices />} />
               <Route path="/connect" element={<Connect />} />
+              <Route path="/privacy" element={<Privacy />} />
               <Route path="/settings" element={<SettingsRoute />} />
               <Route path="/settings/:page" element={<SettingsRoute />} />
               {/* The Coach screens gate themselves on the instance config; the routes exist

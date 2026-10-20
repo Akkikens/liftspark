@@ -357,3 +357,5 @@ h2, h3, .sec-h, .card-h, .sheet-title, .modal-title {
   .lob-pulse path { stroke-dashoffset: 0 }
   .lob-burst i { display: none }
 }
+.ls-legal p { color: var(--label-2); line-height: 1.55; margin: 0 0 14px }
+.ls-legal h2 { font-family: var(--font-display); font-size: 22px; margin: 22px 0 6px }

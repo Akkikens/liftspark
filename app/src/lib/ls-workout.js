@@ -24,7 +24,10 @@ export function attachMetrics(w, S) {
   const samples = useHeart.getState().takeSamples().filter(p => p[0] >= (w.start || 0) - 60000 && p[0] <= (w.end || Date.now()) + 60000)
   const source = useHeart.getState().source
   const m = workoutMetrics(w, { samples, kg: bodyweightKg(S), profile: S?.lsProfile || {} })
-  w.ls = { ...m, hr: downsample(samples), ...(samples.length ? { source } : {}) }
+  // Only a Bluetooth sensor's trace is kept on the workout. Samples read from Apple Health (tagged
+  // 'w') stay out of the state file, its backups and exports: the workout keeps their aggregates.
+  const own = samples.filter(p => p[2] !== 'w').map(p => [p[0], p[1]])
+  w.ls = { ...m, hr: downsample(own), n: samples.length, ...(samples.length ? { source } : {}) }
   return w
 }
 
@@ -35,12 +38,13 @@ export function attachMetrics(w, S) {
 export async function healthMetrics(w, S) {
   if (!(w?.start > 0 && w?.end > w.start)) return null
   const [{ samples = [] } = {}, { kcal = 0 } = {}] = await Promise.all([health.heartRate(w.start, w.end), health.activeEnergy(w.start, w.end)])
-  const have = w.ls?.hr?.length || 0
+  const have = w.ls?.n ?? w.ls?.hr?.length ?? 0
   const useHealthHr = samples.length > have * 1.5 && samples.length >= 3
   if (!useHealthHr && !(kcal > 0)) return null
   const hr = useHealthHr ? samples : (w.ls?.hr || [])
   const m = workoutMetrics(w, { samples: hr, kg: bodyweightKg(S), profile: S?.lsProfile || {}, healthKcal: kcal })
-  return { ...w.ls, ...m, hr: downsample(hr), ...(useHealthHr ? { source: 'health' } : {}) }
+  // Health's samples give better aggregates but are not copied into the workout (see attachMetrics).
+  return { ...w.ls, ...m, hr: useHealthHr ? [] : (w.ls?.hr || []), n: Math.max(have, samples.length), ...(useHealthHr ? { source: 'health' } : {}) }
 }
 
 const fmtDur = min => (min >= 60 ? `${Math.floor(min / 60)}h ${min % 60}m` : `${min}m`)

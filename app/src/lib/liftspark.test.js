@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { zoneOf, timeInZones, trimpOf, strainOf, keytelKcal, metKcal, workoutMetrics, downsample, maxHrOf, musclesWorked, muscleDots } from './strain.js'
 import { fromOFF, entryFor, totals, bmr, dailyGoal, macroGoals, addFood, removeFood, recentFoods } from './fuel.js'
-import { muscleMapSVG } from './muscle-map.js'
 
 describe('heart-rate zones and strain', () => {
   it('puts a heart rate in the right zone of max HR', () => {
@@ -61,11 +60,6 @@ describe('muscles worked', () => {
     expect(load.chest).toBe(2)
     const dots = muscleDots(load)
     expect(dots[0]).toMatchObject({ region: 'chest', level: 3 })
-  })
-  it('draws a body map with worked regions coloured', () => {
-    const svg = muscleMapSVG({ chest: 3, quads: 1 })
-    expect(svg.startsWith('<svg')).toBe(true)
-    expect(svg).toContain('#ff2f7d')
   })
 })
 

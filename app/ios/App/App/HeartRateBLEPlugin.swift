@@ -27,6 +27,9 @@ public class HeartRateBLEPlugin: CAPPlugin, CAPBridgedPlugin, CBCentralManagerDe
         CAPPluginMethod(name: "disconnect", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "forget", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "status", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setAutoReconnect", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "drain", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "clearTrace", returnType: CAPPluginReturnPromise),
     ]
 
     private static let hrService = CBUUID(string: "180D")
@@ -42,6 +45,9 @@ public class HeartRateBLEPlugin: CAPPlugin, CAPBridgedPlugin, CBCentralManagerDe
     private var state = "idle"
     private var battery: Int?
     private var wantScan = false
+    // Reconnecting to the saved sensor is only wanted while a workout records or a pairing screen
+    // is open; the rest of the time Liftspark leaves the strap (and its battery) alone.
+    private var autoReconnect = false
 
     public override func load() {
         central = CBCentralManager(delegate: self, queue: .main,
@@ -97,13 +103,37 @@ public class HeartRateBLEPlugin: CAPPlugin, CAPBridgedPlugin, CBCentralManagerDe
         call.resolve(statusObject())
     }
 
+    /// { on } — on: connect to the saved sensor now and keep reconnecting; off: let it go.
+    @objc func setAutoReconnect(_ call: CAPPluginCall) {
+        autoReconnect = call.getBool("on", false)
+        if autoReconnect { reconnectSaved() }
+        else if let p = peripheral, !wantScan {
+            central?.cancelPeripheralConnection(p)
+            peripheral = nil
+            setState("idle")
+        }
+        call.resolve()
+    }
+
+    /// Samples heard natively (BLE and Apple Health) after `since` (ms), oldest first:
+    /// { samples: [[ms, bpm, source]] }. They are kept while the web view is suspended (phone
+    /// locked) and in a rolling trace file, so a session survives the lock screen or a crash.
+    @objc func drain(_ call: CAPPluginCall) {
+        call.resolve(["samples": HRBuffer.shared.since(call.getDouble("since") ?? 0)])
+    }
+
+    @objc func clearTrace(_ call: CAPPluginCall) {
+        HRBuffer.shared.clear()
+        call.resolve()
+    }
+
     // MARK: CBCentralManagerDelegate
 
     public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         switch central.state {
         case .poweredOn:
             if state == "off" || state == "unauthorized" { setState("idle") }
-            reconnectSaved()
+            if autoReconnect || peripheral != nil { reconnectSaved() }
             startScanIfReady()
         case .unauthorized: setState("unauthorized")
         default: setState("off")
@@ -137,7 +167,9 @@ public class HeartRateBLEPlugin: CAPPlugin, CAPBridgedPlugin, CBCentralManagerDe
     public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         // Out of range, the strap taken off, the watch's broadcast ended: keep trying while it is still
         // the chosen device. A pending connect has no timeout and completes when it comes back.
-        if self.peripheral?.identifier == peripheral.identifier { retryLater(peripheral) }
+        if self.peripheral?.identifier == peripheral.identifier {
+            if autoReconnect { retryLater(peripheral) } else { self.peripheral = nil; setState("idle") }
+        }
     }
 
     // MARK: CBPeripheralDelegate
@@ -164,8 +196,9 @@ public class HeartRateBLEPlugin: CAPPlugin, CAPBridgedPlugin, CBCentralManagerDe
             return
         }
         guard characteristic.uuid == Self.hrMeasurement, let m = Self.parse(data) else { return }
-        notifyListeners("heartRate", data: ["bpm": m.bpm, "rr": m.rr, "contact": m.contact,
-                                            "t": Date().timeIntervalSince1970 * 1000, "source": "ble"])
+        let t = Date().timeIntervalSince1970 * 1000
+        if m.contact { HRBuffer.shared.add(t, Double(m.bpm), "ble") }
+        notifyListeners("heartRate", data: ["bpm": m.bpm, "rr": m.rr, "contact": m.contact, "t": t, "source": "ble"])
     }
 
     // MARK: helpers
@@ -243,5 +276,53 @@ public class HeartRateBLEPlugin: CAPPlugin, CAPBridgedPlugin, CBCentralManagerDe
         if let n = UserDefaults.standard.string(forKey: Self.savedNameKey) { o["name"] = n }
         if let battery { o["battery"] = battery }
         return o
+    }
+}
+
+/// Heart-rate samples heard natively, for the times the web view can't take them (phone locked, app
+/// in the background, a crash). Capped at 8 hours of 1 Hz data; written every 30 s to a trace file in
+/// Application Support that is excluded from iCloud backup, and reloaded on launch.
+final class HRBuffer {
+    static let shared = HRBuffer()
+    private var rows: [[Any]] = []
+    private var lastSave = Date.distantPast
+    private let q = DispatchQueue(label: "liftspark.hrbuffer")
+    private let cap = 8 * 3600
+
+    private lazy var url: URL? = {
+        guard let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { return nil }
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        var u = dir.appendingPathComponent("hr-trace.json")
+        var v = URLResourceValues(); v.isExcludedFromBackup = true
+        if !FileManager.default.fileExists(atPath: u.path) { FileManager.default.createFile(atPath: u.path, contents: Data("[]".utf8)) }
+        try? u.setResourceValues(v)
+        return u
+    }()
+
+    private init() {
+        q.sync {
+            if let url, let d = try? Data(contentsOf: url), let a = try? JSONSerialization.jsonObject(with: d) as? [[Any]] { rows = a }
+        }
+    }
+
+    func add(_ t: Double, _ bpm: Double, _ source: String) {
+        q.async {
+            if let last = self.rows.last, let lt = last.first as? Double, abs(lt - t) < 1 { return }
+            self.rows.append([t, bpm, source])
+            if self.rows.count > self.cap { self.rows.removeFirst(self.rows.count - self.cap) }
+            if Date().timeIntervalSince(self.lastSave) > 30 { self.save() }
+        }
+    }
+
+    func since(_ t: Double) -> [[Any]] {
+        q.sync { rows.filter { (($0.first as? Double) ?? 0) > t } }
+    }
+
+    func clear() { q.async { self.rows = []; self.save() } }
+
+    private func save() {
+        lastSave = Date()
+        guard let url, let d = try? JSONSerialization.data(withJSONObject: rows) else { return }
+        try? d.write(to: url, options: .atomic)
     }
 }

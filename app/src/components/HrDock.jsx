@@ -16,11 +16,15 @@ export default function HrDock() {
   const source = useHeart(s => s.source)
   const samples = useHeart(s => s.samples)
   const bleState = useHeart(s => s.bleState)
+  const kind = useStore(s => s.S.lsWearable?.kind)
+  const activeStart = useStore(s => s.S.active?.start)
   const [now, setNow] = useState(Date.now())
 
   useEffect(() => {
     initHeart()
-    useHeart.getState().startRecording({ watch: profile.watchLive !== false })
+    // The iPhone workout session is opt-in (it only hears external sensors); Apple Watch samples
+    // arrive through Health whenever a workout runs on the Watch.
+    useHeart.getState().startRecording({ since: activeStart || Date.now(), session: profile.watchLive === true })
     const tm = setInterval(() => setNow(Date.now()), 2000)
     return () => clearInterval(tm)
   }, [])
@@ -29,11 +33,11 @@ export default function HrDock() {
   const max = maxHrOf(profile)
   if (!fresh && !samples.length) {
     const connecting = bleState === 'connecting' || bleState === 'scanning'
-    return <button className="hr-dock" style={{ width: '100%', textAlign: 'start' }} onClick={() => nav('/devices')}>
+    return <button className="hr-dock" style={{ width: '100%', textAlign: 'start' }} onClick={() => nav('/connect')}>
       <svg className="heart" viewBox="0 0 24 24" style={{ animation: 'none', opacity: .5 }} aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.2C.8 8.2 3 4.5 6.7 4.5c2.1 0 3.6 1.1 5.3 3 1.7-1.9 3.2-3 5.3-3 3.7 0 5.9 3.7 4.3 7.3C19.5 16.4 12 21 12 21z" /></svg>
       <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 700 }}>{connecting ? t('Looking for your heart-rate sensor…') : t('Add live heart rate')}</div>
-        <div className="ls-sub">{t('Apple Watch, WHOOP, Garmin, Polar or any Bluetooth strap')}</div>
+        <div style={{ fontWeight: 700 }}>{connecting ? t('Looking for your heart-rate sensor…') : kind === 'watch' ? t('Waiting for your Apple Watch') : t('Add live heart rate')}</div>
+        <div className="ls-sub">{kind === 'watch' ? t('Start any workout on your Watch to stream live heart rate.') : t('Apple Watch, WHOOP, Garmin, Polar or any Bluetooth strap')}</div>
       </div>
     </button>
   }
@@ -46,6 +50,7 @@ export default function HrDock() {
     <div>
       <div className="bpm" style={fresh ? undefined : { color: 'var(--label-3)' }}>{bpm || '–'}</div>
       <div className="ls-sub">{source === 'ble' ? t('Sensor') : t('Watch')} · {t('bpm')}</div>
+      {source === 'watch' && !fresh && <div className="ls-sub" style={{ maxWidth: 120 }}>{t('Start any workout on your Watch to stream live heart rate.')}</div>}
     </div>
     <div style={{ flex: 1, display: 'grid', gap: 8 }}>
       {z >= 0 && <span className="zone" style={{ background: ZONE_COLORS[z], justifySelf: 'start' }}>Z{z + 1} {t(ZONE_NAMES[z])}</span>}

@@ -35,6 +35,9 @@ export const health = {
   activeEnergy: (start, end) => call('health', 'activeEnergy', { start, end }, { kcal: 0 }),
   saveDietaryEnergy: (rec) => call('health', 'saveDietaryEnergy', rec, null),
   startLive: (opts = {}) => call('health', 'startLiveHeartRate', opts, { mode: 'none' }),
+  importWorkouts: (start, end) => call('health', 'importWorkouts', { start, end }, { workouts: [] }),
+  importQuantity: (type, start, end) => call('health', 'importQuantity', { type, start, end }, { days: [] }),
+  importSleep: (start, end) => call('health', 'importSleep', { start, end }, { nights: [] }),
   stopLive: () => call('health', 'stopLiveHeartRate', undefined, null),
   open: () => call('health', 'openSettings', undefined, null),
 }
@@ -46,6 +49,9 @@ export const ble = {
   disconnect: () => call('ble', 'disconnect', undefined, null),
   forget: () => call('ble', 'forget', undefined, null),
   status: () => call('ble', 'status', undefined, { state: 'unsupported' }),
+  setAutoReconnect: on => call('ble', 'setAutoReconnect', { on }, null),
+  drain: since => call('ble', 'drain', { since }, { samples: [] }),
+  clearTrace: () => call('ble', 'clearTrace', undefined, null),
 }
 
 export async function webAuth(url, scheme = 'liftspark') {

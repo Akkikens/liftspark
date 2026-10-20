@@ -70,7 +70,9 @@ export function HRScanner({ kind = 'strap', onConnected }) {
       if (i < 0) return [...list, d].sort((a, b) => (b.rssi || -999) - (a.rssi || -999))
       const next = [...list]; next[i] = { ...next[i], ...d }; return next
     }))
-    return () => { off?.(); ble.stopScan() }
+    // While a pairing screen is open the saved sensor may connect; afterwards only a workout does.
+    ble.setAutoReconnect(true)
+    return () => { off?.(); ble.stopScan(); if (!useHeart.getState().recording) ble.setAutoReconnect(false) }
   }, [])
   useEffect(() => {
     if (bleState === 'connected' && picked) { markConnected(kind); setPicked(null); onConnected?.() }
@@ -97,7 +99,7 @@ export function HRScanner({ kind = 'strap', onConnected }) {
       <span className={'ls-dot' + (connected ? ' on' : '')} aria-hidden="true" />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontWeight: 700 }}>{name}</div>
-        <div className="ls-sub">{connected ? (live ? t('{0} bpm now', bpm) : t('Connected')) : bleState === 'connecting' ? t('Reconnecting…') : t('Not connected, reconnects when in range')}{battery != null ? ' · ' + t('battery {0}%', battery) : ''}</div>
+        <div className="ls-sub">{connected ? (live ? t('{0} bpm now', bpm) : t('Connected')) : bleState === 'connecting' ? t('Reconnecting…') : t('Connects during workouts')}{battery != null ? ' · ' + t('battery {0}%', battery) : ''}</div>
       </div>
       <button className="ls-btn" onClick={() => { ble.forget(); useStore.getState().update(s => { if (s.lsWearable && s.lsWearable.kind === kind) s.lsWearable = null }) }}>{t('Forget')}</button>
     </div>}
@@ -151,18 +153,12 @@ function ApiSignIn({ provider, name }) {
 
 /** The flow behind one tile. */
 export function WearableFlow({ kind, onDone }) {
-  const lp = useStore(s => s.S.lsProfile) || {}
-  const update = useStore(s => s.update)
   const k = KIND[kind]
   return <div className="ls-flow">
     <div className="ls-flow-head"><span className="ls-tile-ic"><DeviceGlyph glyph={k.glyph} /></span><div><h2>{k.name}</h2><div className="ls-sub">{t(k.sub)}</div></div></div>
     {kind === 'watch' && <>
-      <Steps items={[t('Allow Liftspark to read heart rate and active energy from Apple Health.'), t('Start a workout in Liftspark: heart rate streams from your watch while it records.'), t('Finished workouts are saved to Health with heart rate and calories.')]} />
+      <Steps items={[t('Allow Liftspark to read heart rate and active energy from Apple Health.'), t('When you lift, start any workout on the Watch (Traditional Strength Training): its heart rate reaches Liftspark through Health.'), t('Your Liftspark workout is saved to Health; if the Watch recorded the same session, Liftspark doesn’t add a duplicate.')]} />
       <HealthButton kind="watch" />
-      <label className="ls-li" style={{ marginTop: 10 }}>
-        <span style={{ flex: 1 }}>{t('Start a watch workout session for live heart rate')}</span>
-        <input type="checkbox" checked={lp.watchLive !== false} onChange={e => update(s => { s.lsProfile = { ...(s.lsProfile || {}), watchLive: e.target.checked } })} />
-      </label>
     </>}
     {kind === 'whoop' && <>
       <Steps items={[t('Open the WHOOP app → More → Device settings.'), t('Turn on “Broadcast Heart Rate”.'), t('Tap Scan below and pick your WHOOP.')]} />

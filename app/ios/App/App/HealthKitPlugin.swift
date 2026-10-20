@@ -29,6 +29,9 @@ public class HealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "saveDietaryEnergy", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "startLiveHeartRate", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "stopLiveHeartRate", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "importWorkouts", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "importQuantity", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "importSleep", returnType: CAPPluginReturnPromise),
     ]
 
     private let store = HKHealthStore()
@@ -43,13 +46,17 @@ public class HealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
     private var massType: HKQuantityType { HKQuantityType(.bodyMass) }
     private var restingHrType: HKQuantityType { HKQuantityType(.restingHeartRate) }
     private var dietType: HKQuantityType { HKQuantityType(.dietaryEnergyConsumed) }
+    private var hrvType: HKQuantityType { HKQuantityType(.heartRateVariabilitySDNN) }
+    private var sleepType: HKCategoryType { HKCategoryType(.sleepAnalysis) }
     private let bpm = HKUnit.count().unitDivided(by: .minute())
 
     private var shareTypes: Set<HKSampleType> {
         [HKObjectType.workoutType(), activeType, massType, hrType, dietType]
     }
     private var readTypes: Set<HKObjectType> {
-        [HKObjectType.workoutType(), hrType, activeType, basalType, stepsType, massType, restingHrType, dietType]
+        // Only what a screen uses: live and post-workout heart rate, today's energy and steps, weight,
+        // and for the importer and recovery, workouts, resting heart rate, HRV and sleep.
+        [HKObjectType.workoutType(), hrType, activeType, basalType, stepsType, massType, restingHrType, hrvType, sleepType]
     }
 
     // MARK: openGym-compatible surface
@@ -91,9 +98,13 @@ public class HealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
             guard let self else { return }
             let group = DispatchGroup()
             var failure: Error?
+            var skipped: [String] = []
             for s in sessions {
                 group.enter()
-                self.saveWorkout(s) { err in if let err { failure = err }; group.leave() }
+                self.overlapsOtherWorkout(s) { overlap in
+                    if overlap { DispatchQueue.main.async { if let id = s["id"] as? String { skipped.append(id) }; group.leave() }; return }
+                    self.saveWorkout(s) { err in if let err { failure = err }; group.leave() }
+                }
             }
             for w in weights {
                 guard let id = w["id"] as? String, let kg = (w["kg"] as? NSNumber)?.doubleValue,
@@ -105,7 +116,7 @@ public class HealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
                 self.store.save(sample) { _, err in if let err { failure = err }; group.leave() }
             }
             group.notify(queue: .main) {
-                if let failure { call.reject(failure.localizedDescription, "permission") } else { call.resolve() }
+                if let failure { call.reject(failure.localizedDescription, "permission") } else { call.resolve(["skipped": skipped]) }
             }
         }
     }
@@ -195,12 +206,17 @@ public class HealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
     /// Apple Watch streams its sensor into it); on older systems, or when the session can't start, new
     /// heart-rate samples arriving in Health (a workout running on the watch) are forwarded as they land.
     /// Emits "heartRate" { bpm, t, source: "watch" }.
+    ///
+    /// The anchored query always runs: an iPhone workout session only receives heart rate from an
+    /// external Bluetooth sensor, not from the Watch, so the session is opt-in ({ session: true }) and
+    /// never the only path. The Watch's samples reach Health only while a workout runs on the Watch,
+    /// which is why JS says so when they stay sparse.
     @objc func startLiveHeartRate(_ call: CAPPluginCall) {
         stopLive()
-        if #available(iOS 26.0, *), call.getBool("session", true) {
-            if startSession() { call.resolve(["mode": "session"]); return }
-        }
         startAnchored()
+        if #available(iOS 26.0, *), call.getBool("session", false), startSession() {
+            call.resolve(["mode": "session+samples"]); return
+        }
         call.resolve(["mode": "samples"])
     }
 
@@ -209,12 +225,141 @@ public class HealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
         call.resolve()
     }
 
+
+    // MARK: Import (history backfill)
+
+    private func range(_ call: CAPPluginCall) -> (Date, Date)? {
+        guard let s = call.getDouble("start"), let e = call.getDouble("end"), e > s else { return nil }
+        return (Date(timeIntervalSince1970: s / 1000), Date(timeIntervalSince1970: e / 1000))
+    }
+
+    private static let dayFmt: DateFormatter = { let f = DateFormatter(); f.calendar = Calendar(identifier: .gregorian); f.locale = Locale(identifier: "en_US_POSIX"); f.dateFormat = "yyyy-MM-dd"; return f }()
+
+    /// Past workouts from other apps and devices: { workouts: [{ uuid, type, start, end, kcal, distanceM,
+    /// avgHr, maxHr, source, sourceBundle }] }. Liftspark's own workouts are left out.
+    @objc func importWorkouts(_ call: CAPPluginCall) {
+        guard let (start, end) = range(call) else { call.reject("start and end are required"); return }
+        let pred = HKQuery.predicateForSamples(withStart: start, end: end, options: [])
+        let sort = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
+        let q = HKSampleQuery(sampleType: .workoutType(), predicate: pred, limit: HKObjectQueryNoLimit, sortDescriptors: [sort]) { [weak self] _, samples, err in
+            guard let self else { return }
+            if let err { call.reject(err.localizedDescription); return }
+            let mine = Bundle.main.bundleIdentifier ?? ""
+            let list = (samples as? [HKWorkout] ?? []).filter {
+                $0.sourceRevision.source.bundleIdentifier != mine && $0.metadata?[HKMetadataKeyExternalUUID] == nil
+            }
+            var out: [JSObject] = []
+            for (i, w) in list.enumerated() {
+                var o: JSObject = ["uuid": w.uuid.uuidString, "type": Self.typeName(w.workoutActivityType),
+                                   "start": w.startDate.timeIntervalSince1970 * 1000, "end": w.endDate.timeIntervalSince1970 * 1000,
+                                   "source": w.sourceRevision.source.name, "sourceBundle": w.sourceRevision.source.bundleIdentifier]
+                if let k = w.statistics(for: self.activeType)?.sumQuantity()?.doubleValue(for: .kilocalorie()) { o["kcal"] = k }
+                if let d = w.totalDistance?.doubleValue(for: .meter()) { o["distanceM"] = d }
+                if let st = w.statistics(for: self.hrType) {
+                    if let a = st.averageQuantity()?.doubleValue(for: self.bpm) { o["avgHr"] = a }
+                    if let m = st.maximumQuantity()?.doubleValue(for: self.bpm) { o["maxHr"] = m }
+                }
+                out.append(o)
+                if i % 50 == 0 { self.notifyListeners("importProgress", data: ["phase": "workouts", "done": i, "total": list.count]) }
+            }
+            call.resolve(["workouts": out])
+        }
+        store.execute(q)
+    }
+
+    /// Daily values of one quantity: { days: [{ d: "YYYY-MM-DD", v }] } — weight in kg (the day's
+    /// average), resting heart rate and HRV (average), active energy and steps (sum).
+    @objc func importQuantity(_ call: CAPPluginCall) {
+        guard let (start, end) = range(call) else { call.reject("start and end are required"); return }
+        let kinds: [String: (HKQuantityType, HKUnit, HKStatisticsOptions)] = [
+            "bodyMass": (massType, .gramUnit(with: .kilo), .discreteAverage),
+            "restingHeartRate": (restingHrType, bpm, .discreteAverage),
+            "heartRateVariabilitySDNN": (hrvType, .secondUnit(with: .milli), .discreteAverage),
+            "activeEnergyBurned": (activeType, .kilocalorie(), .cumulativeSum),
+            "stepCount": (stepsType, .count(), .cumulativeSum),
+        ]
+        guard let name = call.getString("type"), let (type, unit, opt) = kinds[name] else { call.reject("unknown type"); return }
+        let cal = Calendar.current
+        let anchor = cal.startOfDay(for: start)
+        let q = HKStatisticsCollectionQuery(quantityType: type, quantitySamplePredicate: HKQuery.predicateForSamples(withStart: start, end: end),
+                                            options: opt, anchorDate: anchor, intervalComponents: DateComponents(day: 1))
+        q.initialResultsHandler = { _, results, err in
+            if let err { call.reject(err.localizedDescription); return }
+            var days: [JSObject] = []
+            results?.enumerateStatistics(from: anchor, to: end) { st, _ in
+                let qty = opt == .cumulativeSum ? st.sumQuantity() : st.averageQuantity()
+                guard let v = qty?.doubleValue(for: unit) else { return }
+                days.append(["d": Self.dayFmt.string(from: st.startDate), "v": v])
+            }
+            call.resolve(["days": days])
+        }
+        store.execute(q)
+    }
+
+    /// Nights of sleep, by the day you woke up: { nights: [{ d, asleepMin, inBedMin, start, end }] }.
+    @objc func importSleep(_ call: CAPPluginCall) {
+        guard let (start, end) = range(call) else { call.reject("start and end are required"); return }
+        let pred = HKQuery.predicateForSamples(withStart: start, end: end)
+        let q = HKSampleQuery(sampleType: sleepType, predicate: pred, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, err in
+            if let err { call.reject(err.localizedDescription); return }
+            var by: [String: (asleep: Double, inBed: Double, s: Date, e: Date)] = [:]
+            for x in (samples as? [HKCategorySample] ?? []) {
+                let d = Self.dayFmt.string(from: x.endDate)
+                let mins = x.endDate.timeIntervalSince(x.startDate) / 60
+                var r = by[d] ?? (0, 0, x.startDate, x.endDate)
+                if x.value == HKCategoryValueSleepAnalysis.inBed.rawValue { r.inBed += mins }
+                else if x.value != HKCategoryValueSleepAnalysis.awake.rawValue { r.asleep += mins }
+                r.s = min(r.s, x.startDate); r.e = max(r.e, x.endDate)
+                by[d] = r
+            }
+            let nights: [JSObject] = by.keys.sorted().map { d in
+                let r = by[d]!
+                return ["d": d, "asleepMin": Int(r.asleep.rounded()), "inBedMin": Int(max(r.inBed, r.asleep).rounded()),
+                        "start": r.s.timeIntervalSince1970 * 1000, "end": r.e.timeIntervalSince1970 * 1000]
+            }
+            call.resolve(["nights": nights])
+        }
+        store.execute(q)
+    }
+
+    private static func typeName(_ t: HKWorkoutActivityType) -> String {
+        switch t {
+        case .traditionalStrengthTraining: return "traditionalStrengthTraining"
+        case .functionalStrengthTraining: return "functionalStrengthTraining"
+        case .coreTraining: return "coreTraining"
+        case .crossTraining: return "crossTraining"
+        case .highIntensityIntervalTraining: return "hiit"
+        case .running: return "running"
+        case .walking: return "walking"
+        case .hiking: return "hiking"
+        case .cycling: return "cycling"
+        case .swimming: return "swimming"
+        case .rowing: return "rowing"
+        case .elliptical: return "elliptical"
+        case .stairClimbing, .stairs: return "stairs"
+        case .yoga: return "yoga"
+        case .pilates: return "pilates"
+        case .mixedCardio: return "mixedCardio"
+        case .soccer: return "soccer"
+        case .basketball: return "basketball"
+        case .tennis: return "tennis"
+        case .boxing, .kickboxing, .martialArts: return "combat"
+        case .dance, .cardioDance, .socialDance: return "dance"
+        case .flexibility, .cooldown: return "mobility"
+        default: return "other"
+        }
+    }
+
     // MARK: internals
 
     private func startAnchored() {
         let pred = HKQuery.predicateForSamples(withStart: Date().addingTimeInterval(-120), end: nil)
         let handler: (HKAnchoredObjectQuery, [HKSample]?, [HKDeletedObject]?, HKQueryAnchor?, Error?) -> Void = { [weak self] _, samples, _, _, _ in
-            guard let self, let last = (samples as? [HKQuantitySample])?.max(by: { $0.endDate < $1.endDate }) else { return }
+            guard let self, let list = samples as? [HKQuantitySample], !list.isEmpty else { return }
+            // Every sample goes into the native buffer (they arrive in batches after the phone unlocks);
+            // the newest is also sent live.
+            for x in list { HRBuffer.shared.add(x.endDate.timeIntervalSince1970 * 1000, x.quantity.doubleValue(for: self.bpm), "watch") }
+            guard let last = list.max(by: { $0.endDate < $1.endDate }) else { return }
             self.notifyListeners("heartRate", data: ["bpm": last.quantity.doubleValue(for: self.bpm),
                                                     "t": last.endDate.timeIntervalSince1970 * 1000, "source": "watch"])
         }
@@ -269,6 +414,22 @@ public class HealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
             store.deleteObjects(of: type, predicate: pred) { _, _, _ in group.leave() }
         }
         group.notify(queue: .global(), execute: done)
+    }
+
+    /// True when another app's workout (an Apple Watch or Garmin recording of the same session)
+    /// already covers at least half of this one, so Health doesn't count the session twice.
+    private func overlapsOtherWorkout(_ s: JSObject, done: @escaping (Bool) -> Void) {
+        guard let startMs = (s["start"] as? NSNumber)?.doubleValue, let endMs = (s["end"] as? NSNumber)?.doubleValue, endMs > startMs else { done(false); return }
+        let start = Date(timeIntervalSince1970: startMs / 1000), end = Date(timeIntervalSince1970: endMs / 1000)
+        let pred = HKQuery.predicateForSamples(withStart: start, end: end, options: [])
+        let q = HKSampleQuery(sampleType: .workoutType(), predicate: pred, limit: 20, sortDescriptors: nil) { _, samples, _ in
+            let mine = Bundle.main.bundleIdentifier ?? ""
+            let covered = (samples ?? []).filter { $0.sourceRevision.source.bundleIdentifier != mine }.map {
+                max(0, min($0.endDate, end).timeIntervalSince(max($0.startDate, start)))
+            }.max() ?? 0
+            done(covered >= end.timeIntervalSince(start) * 0.5)
+        }
+        store.execute(q)
     }
 
     private func saveWorkout(_ s: JSObject, done: @escaping (Error?) -> Void) {

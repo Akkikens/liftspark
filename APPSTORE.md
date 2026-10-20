@@ -4,9 +4,13 @@
 - **Subtitle (≤30):** `Lifting, heart rate & calories` (30)
 - **Category:** Health & Fitness (secondary: Sports)
 - **Price:** Free
-- **Keywords (≤100):** `gym,workout,strength,weightlifting,heart rate,strain,calories,food,macro,whoop,garmin,strava,tracker`
-  Don't put other brands' names in the keyword field. Drop `whoop,garmin,strava` if review
-  objects; they describe integrations the app really has.
+- **Keywords (≤100):** `gym,workout,strength,weightlifting,heart rate,strain,calories,food,macro,tracker,lifting,hrv`
+  No other brands' names in the keyword field (guideline 2.3.7); the description names the
+  integrations instead.
+- **Privacy policy URL:** host PRIVACY.md (GitHub Pages or the repo once public); the same text is in
+  the app at Settings → This phone → Privacy policy.
+- **Encryption:** `ITSAppUsesNonExemptEncryption = NO` (HTTPS only).
+- **Devices:** iPhone only for v1 (`TARGETED_DEVICE_FAMILY = 1`).
 
 ## Description
 
@@ -53,4 +57,9 @@ Liftspark is open source (AGPL) and built on openGym by Duarte Santos.
 - **Bluetooth** is used only for heart-rate sensors (standard Heart Rate Service). To test without a
   strap, workouts run normally and show "Add live heart rate".
 - **No login.**
+- **Background modes:** `bluetooth-central` keeps a paired heart-rate strap streaming while the
+  phone is locked during a workout. `workout-processing` is for the optional iOS 26 iPhone workout
+  session and the Apple Watch app's mirrored session; drop it if the Watch app doesn't ship.
+- **Privacy manifest:** PrivacyInfo.xcprivacy declares UserDefaults (CA92.1, the paired sensor) and
+  file timestamps (C617.1, Capacitor Filesystem); no tracking, no collected data types.
 - **Strava** works through Apple Health; direct posting appears only when configured.

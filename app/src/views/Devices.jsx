@@ -75,10 +75,10 @@ function AppleHealth() {
       <div style={{ height: 12 }} />
       <div className="ls-row" style={{ justifyContent: 'space-between' }}>
         <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 700 }}>{t('Apple Watch live heart rate')}</div>
-          <div className="ls-sub">{t('During a workout, read heart rate from your watch as it records.')}</div>
+          <div style={{ fontWeight: 700 }}>{t('iPhone workout session')}</div>
+          <div className="ls-sub">{t('iOS 26: run a Health workout session on the phone while you lift. Apple Watch heart rate arrives whenever a workout runs on the Watch, with or without this.')}</div>
         </div>
-        <Switch checked={lp.watchLive !== false} onChange={v => update(s => { s.lsProfile = { ...(s.lsProfile || {}), watchLive: v } })} aria-label={t('Apple Watch live heart rate')} />
+        <Switch checked={lp.watchLive === true} onChange={v => update(s => { s.lsProfile = { ...(s.lsProfile || {}), watchLive: v } })} aria-label={t('iPhone workout session')} />
       </div>
       <button className="ls-btn full" style={{ marginTop: 12 }} onClick={() => health.open()}>{t('Open the Health app')}</button>
     </div>

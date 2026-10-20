@@ -836,7 +836,8 @@ export default function Settings({ page = null, find = null, via = null }) {
         Built on openGym by Duarte Santos (<a href="https://github.com/DuarteSantos8/openGym" target="_blank" rel="noopener">github.com/DuarteSantos8/openGym</a>), used with permission, AGPL-3.0.<br />
         Exercise pictures: <a href="https://github.com/yuhonas/free-exercise-db" target="_blank" rel="noopener">free-exercise-db</a>, public domain.
         Food data © <a href="https://world.openfoodfacts.org" target="_blank" rel="noopener">Open Food Facts</a> contributors, ODbL.
-        See <a href="https://github.com/Akkikens/liftspark/blob/main/NOTICE.md" target="_blank" rel="noopener">NOTICE.md</a>
+        See <a href="https://github.com/Akkikens/liftspark/blob/main/NOTICE.md" target="_blank" rel="noopener">NOTICE.md</a> · <a href="#/privacy">{t('Privacy policy')}</a><br />
+        {t('Strain, zones and calories are estimates, not medical advice.')}
       </div>
     </>,
 
@@ -855,6 +856,7 @@ export default function Settings({ page = null, find = null, via = null }) {
       {!(MOBILE && user) && <Section title={MOBILE ? t('Your data') : DEMO ? t('Demo') : t('Account')}>
         {MOBILE ? <>
           <Row icon="lock" iconTint="var(--acc)" title={t('Your training data stays on this phone')} subtitle={t('No account and no Liftspark cloud. Food searches go to Open Food Facts; Strava, WHOOP and Oura only when you connect them. Back up anytime in Data & backup.')} />
+          <Row icon="shield" iconTint="var(--blue)" title={t('Privacy policy')} accessory="chevron" onClick={() => nav('/privacy')} />
           <KeptChangesRows />
         </> : DEMO ? <>
           <Row icon="info" iconTint="var(--acc)" title={t('You’re in the demo')} subtitle={t('Example data, stored only in this browser. Go wild and change anything you like.')} />

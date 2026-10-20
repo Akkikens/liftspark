@@ -40,10 +40,12 @@
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Liftspark connects to your heart-rate strap or watch (WHOOP, Garmin, Polar and others) to show live heart rate during workouts.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSCameraUsageDescription</key>
-	<string>Used to scan your gym membership QR code, and to take a photo or video of an exercise you add yourself.</string>
+	<string>Used to scan food barcodes, read nutrition labels, scan your gym membership QR code, and take a photo or video of an exercise you add yourself.</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Liftspark reads your heart rate, active energy, steps and weight from Apple Health to show your strain and calories, including data from Apple Watch, Garmin and Oura.</string>
+	<string>Liftspark reads heart rate, workouts, active energy, steps, weight, resting heart rate, HRV and sleep from Apple Health to show your strain, calories and recovery, including data from Apple Watch, Garmin and Oura.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Liftspark saves finished workouts, weigh-ins and food energy to Apple Health, so apps like Strava can import them.</string>
 	<key>NSMicrophoneUsageDescription</key>

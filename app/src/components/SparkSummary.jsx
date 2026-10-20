@@ -8,7 +8,6 @@ import { shareToStrava } from '../lib/share-card.js'
 import { backendConfig, isConnected, postToStrava } from '../lib/integrations.js'
 import { loadHealth } from '../lib/health-sync.js'
 import { musclesWorked, muscleDots, ZONE_COLORS, ZONE_NAMES } from '../lib/strain.js'
-import MuscleMap from './MuscleMap.jsx'
 import Ring from './Ring.jsx'
 
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1)
@@ -92,7 +91,6 @@ export default function SparkSummary({ w }) {
     {ls.estimated && <div className="ls-note" style={{ marginTop: 10 }}>{t('No heart rate this time, so strain and calories are estimated from your time and weight. Connect a watch or strap for the real thing.')}</div>}
 
     {dots.length > 0 && <div style={{ marginTop: 14 }}>
-      <div style={{ display: 'flex', justifyContent: 'center' }}><MuscleMap load={musclesWorked(w)} width={220} /></div>
       <div className="ls-grid2" style={{ gap: '6px 16px', marginTop: 8 }}>
         {dots.map(m => <div key={m.region} className="ls-row" style={{ justifyContent: 'space-between', gap: 8, fontSize: 14 }}>
           <span style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{t(cap(m.region))}</span>
@@ -102,13 +100,15 @@ export default function SparkSummary({ w }) {
     </div>}
 
     <div style={{ display: 'grid', gap: 10, marginTop: 16 }}>
-      <button className="ls-btn pri full" onClick={share}>{t('Share to Strava')}</button>
-      {strava.configured && (strava.connected
-        ? <button className="ls-btn full" onClick={strava.posted ? () => window.open(strava.posted, '_blank') : post} disabled={strava.busy}>
-            {strava.posted ? t('Open on Strava') : strava.busy ? t('Posting…') : t('Post to Strava directly')}</button>
-        : <button className="ls-btn full" onClick={() => nav('/devices')}>{t('Connect Strava for one-tap posting')}</button>)}
-      {healthOn === false && <button className="ls-btn full" onClick={() => nav('/devices')}>{t('Send workouts to Strava automatically (via Apple Health)')}</button>}
-      {healthOn && <div className="ls-sub" style={{ textAlign: 'center' }}>{t('Saved to Apple Health. Strava imports it if Health is connected there.')}</div>}
+      {/* One action and one line of status: direct posting (when configured and connected) takes
+          the primary slot; otherwise the share card does. */}
+      {strava.configured && strava.connected
+        ? <button className="ls-btn pri full" onClick={strava.posted ? () => window.open(strava.posted, '_blank') : post} disabled={strava.busy}>
+            {strava.posted ? t('Open on Strava') : strava.busy ? t('Posting…') : t('Post to Strava')}</button>
+        : <button className="ls-btn pri full" onClick={share}>{t('Share to Strava')}</button>}
+      {healthOn
+        ? <div className="ls-sub" style={{ textAlign: 'center' }}>{t('Saved to Apple Health. Strava imports it if Health is connected there.')}</div>
+        : <button className="ls-sub" style={{ textAlign: 'center', background: 'none', border: 0, textDecoration: 'underline' }} onClick={() => nav('/devices')}>{t('Sync to Strava automatically through Apple Health')}</button>}
     </div>
   </div>
 }
