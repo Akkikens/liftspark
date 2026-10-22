@@ -5,7 +5,7 @@ import { useUI } from './store/useUI.js'
 import { bindUI } from './components/ui.jsx'
 import { setWeightDecimals, todayISO } from './lib/format.js'
 import { accentValue, applyAccent } from './lib/accent.js'
-import { setLang, useLang, baseLang } from './lib/i18n.js'
+import { setLang, useLang, baseLang, t } from './lib/i18n.js'
 import { effectiveLang } from './lib/default-lang.js'
 import { setPlayOnSilent, setVibrate, setAlarmBuzzer } from './lib/sound.js'
 import { buzzAsAlarm } from './lib/rest-alert.js'
@@ -17,7 +17,8 @@ import { installViewportGuard } from './lib/viewport-guard.js'
 import { installChipDrag } from './lib/hchips.js'
 import { syncPushSubscription } from './lib/push.js'
 import { MOBILE } from './lib/mobile.js'
-import { exitWorkoutEdit, startFlow, beginWorkout } from './sheets.jsx'
+import { exitWorkoutEdit, startFlow, beginWorkout, confirmSheet } from './sheets.jsx'
+import { detectedUnit } from './lib/default-unit.js'
 import { effectiveRoutineIds } from './lib/history.js'
 import Icon from './components/Icon.jsx'
 import TabBar from './components/TabBar.jsx'
@@ -90,6 +91,20 @@ function Shell() {
   // Liftspark's onboarding: a genuine first launch (until it is finished once), or one in progress,
   // which is how it resumes after the app is closed halfway and how Settings → Redo onboarding works.
   const onboarding = (needsMobileOnboarding && !S.lsOnboarded) || S.lsOnboarding?.step != null
+  // A profile from before units followed the region sits in kg without ever having chosen. On a
+  // device whose region lifts in pounds, ask once; "Keep kg" is remembered on this device.
+  useEffect(() => {
+    if (onboarding || !ready || S.unit === 'lb' || S.unitSet || detectedUnit() !== 'lb') return
+    let asked = false
+    try { asked = localStorage.getItem('ls-unit-asked') === '1'; if (!asked) localStorage.setItem('ls-unit-asked', '1') } catch (e) { asked = true }
+    if (asked) return
+    confirmSheet({
+      title: t('Use pounds?'),
+      message: t('Your weights are in kg. Switch to lb and every logged weight is converted, so nothing changes in your history. You can change this any time in Settings.'),
+      confirmText: t('Switch to lb'), cancelText: t('Keep kg'),
+      onConfirm: () => { useStore.getState().setUnit('lb', { convert: true }) },
+    })
+  }, [onboarding, ready, S.unit, S.unitSet])
   const langV = useLang()   // re-renders the whole shell when the language (pack) changes
   useEffect(() => { setNav(navigate) }, [navigate])
   // A workout started on the Apple Watch with none running here: start today's plan (or freestyle).
