@@ -163,7 +163,7 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
       const row = setSideField(e.sets[i], side, field, v)
       row.sides[side].weightOrigin = WEIGHT_ORIGIN_MANUAL
       e.sets[i] = row
-      e.sets = cascadeWeight(e.sets, i, v, side, e.target?.backoffStep)
+      if (S.cascadeWeights === true) e.sets = cascadeWeight(e.sets, i, v, side, e.target?.backoffStep)
     }, true)
   }
   // Drop/burst edits accept an optional `side` ('L'|'R'): present for a per-side row (edits that
@@ -1137,12 +1137,12 @@ function ActiveWorkout() {
     // hold put aside must not outrank what you just typed, or the field would read 45 and the ▶
     // would still hold the 30 the row was asking for before.
     if (field === 'sec') delete e.sets[i].planSec
-    // Changing a work set's weight cascades to the following inherited work sets, so a correction
-    // carries through without retyping every row while explicit manual exceptions stay put. A
-    // warm-up edit stays on its own row, and the later rungs keep their ramp loads.
+    // A weight edit changes that set and nothing else. With "Carry weight changes to later sets"
+    // on in Settings (S.cascadeWeights), a work-set edit also carries to the following inherited
+    // work sets, while explicit manual exceptions stay put. A warm-up edit stays on its own row.
     if (field === 'w') {
       e.sets[i].weightOrigin = WEIGHT_ORIGIN_MANUAL
-      e.sets = cascadeWeight(e.sets, i, v, undefined, e.target?.backoffStep)
+      if (S.cascadeWeights === true) e.sets = cascadeWeight(e.sets, i, v, undefined, e.target?.backoffStep)
     }
   })
   const modeAt = idx => modeOf({ ...(A.entries[idx].target || {}), id: A.entries[idx].id })

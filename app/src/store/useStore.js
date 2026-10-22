@@ -5,6 +5,7 @@ import { t } from '../lib/i18n.js'
 import { registerCustom, healCustomEx } from '../lib/exercises.js'
 import { DEMO, DEMO_SEEDED } from '../lib/demo.js'
 import { rememberDefaultLang } from '../lib/default-lang.js'
+import { detectedUnit } from '../lib/default-unit.js'
 import { guestAllowed } from '../lib/guest.js'
 import { MOBILE, initReminderSync, nativeLoad, nativeSave, onAppActive, readJsonFile, syncReminder, writeAutoBackup, writeJsonFile } from '../lib/mobile.js'
 import { initHealthSync, syncHealth } from '../lib/health-sync.js'
@@ -259,6 +260,7 @@ const detectedLang = () => {
 export function freshState() {
   const s = clone(DEF)
   s.lang = detectedLang()
+  s.unit = detectedUnit() // lb in the US, Canada, Liberia and Myanmar; Settings or onboarding can switch it
   s.langAuto = true
   s.weighIn = false
   // Exercise animations: Small (v1.3.11), a thumbnail beside the exercise name that a tap opens,
@@ -273,6 +275,7 @@ export function freshState() {
 export function restartedState(cur) {
   const s = freshState()
   if (cur?.lang) { s.lang = cur.lang; s.langAuto = cur.langAuto === true }
+  if (cur?.unit) s.unit = cur.unit // a reset keeps the unit you were already in
   return s
 }
 

@@ -111,7 +111,7 @@ function GoalSuggestion({ S, goal }) {
   return <div className="ls-card" style={{ marginTop: 10, borderInlineStart: '4px solid var(--spark)' }}>
     <div className="ls-k">{t('Weekly check-in')}</div>
     <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20, margin: '2px 0 6px' }}>{t('Your burn looks like {0} kcal a day', sug.tdee.toLocaleString())}</div>
-    <div className="ls-note">{t('From {0} logged days and a weight trend of {1} kg a week. For your goal that makes {2} kcal a day instead of {3}.', sug.loggedDays, (sug.kgPerWeek > 0 ? '+' : '') + sug.kgPerWeek, sug.goal.toLocaleString(), goal.toLocaleString())}</div>
+    <div className="ls-note">{t('From {0} logged days and a weight trend of {1} {2} a week. For your goal that makes {3} kcal a day instead of {4}.', sug.loggedDays, (sug.kgPerWeek > 0 ? '+' : '') + (S.unit === 'lb' ? Math.round(sug.kgPerWeek * 2.2046226218 * 100) / 100 : sug.kgPerWeek), S.unit === 'lb' ? 'lb' : 'kg', sug.goal.toLocaleString(), goal.toLocaleString())}</div>
     <div className="ls-row" style={{ gap: 8, marginTop: 10 }}>
       <button className="ls-btn pri" style={{ flex: 1 }} onClick={() => update(s => { s.lsProfile = { ...(s.lsProfile || {}), goalKcal: sug.goal }; s.lsGoalCheck = week })}>{t('Use {0}', sug.goal.toLocaleString())}</button>
       <button className="ls-btn" onClick={() => update(s => { s.lsGoalCheck = week })}>{t('Keep {0}', goal.toLocaleString())}</button>

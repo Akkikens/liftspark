@@ -107,8 +107,8 @@ function installDom() {
   root = createRoot(container)
 }
 
-async function mount(entries, cur = 0) {
-  mocks.S = workout(entries, cur)
+async function mount(entries, cur = 0, extra = {}) {
+  mocks.S = { ...workout(entries, cur), ...extra }
   installDom()
   await act(async () => { root.render(React.createElement(Workout)) })
 }
@@ -203,5 +203,29 @@ describe('superset stepper — one tap moves one step', () => {
     await tap(stepperButton(0, 0, 0, 'Decrease'))
 
     expect(mocks.S.active.entries[0].sets[0].w).toBe(57.5)
+  })
+})
+
+describe('weight edits stay on their own set', () => {
+  const three = () => [exercise('press', [true, false, false], { sg: 'group' }), exercise('row', [false], { sg: 'group' })]
+
+  // Set 1 is done, then set 2 goes up a step. Set 3 keeps the weight it had.
+  it('changes only the set that was edited', async () => {
+    await mount(three())
+    await tap(stepperButton(0, 1, 0, 'Increase'))
+    expect(mocks.S.active.entries[0].sets.map(x => x.w)).toEqual([60, 62.5, 60])
+  })
+
+  it('does the same for a decrease', async () => {
+    await mount(three())
+    await tap(stepperButton(0, 1, 0, 'Decrease'))
+    expect(mocks.S.active.entries[0].sets.map(x => x.w)).toEqual([60, 57.5, 60])
+  })
+
+  // The old behaviour is still there for anyone who turns it on in Settings.
+  it('carries the change to later sets when "Carry weight changes" is on', async () => {
+    await mount(three(), 0, { cascadeWeights: true })
+    await tap(stepperButton(0, 1, 0, 'Increase'))
+    expect(mocks.S.active.entries[0].sets.map(x => x.w)).toEqual([60, 62.5, 62.5])
   })
 })

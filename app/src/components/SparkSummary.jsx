@@ -27,11 +27,17 @@ export default function SparkSummary({ w }) {
   useEffect(() => {
     let gone = false
     // An Apple Watch or Garmin workout may have recorded heart rate and energy that the phone did not.
-    healthMetrics(w, S).then(better => {
+    // A Garmin, Oura or Apple Watch sync reaches Health minutes after the workout ends, so one look
+    // at the summary is often too early. Look again after 45 s and 3 min, until something better turns up.
+    let done = false
+    const look = () => healthMetrics(w, S).then(better => {
       if (gone || !better) return
+      done = true
       setLs(better)
       update(s => { const x = (s.workouts || []).find(x => x.id === w.id); if (x) x.ls = better })
     }).catch(() => {})
+    look()
+    const retries = [45000, 180000].map(ms => setTimeout(() => { if (!done && !gone) look() }, ms))
     loadHealth().then(h => !gone && setHealthOn(!!h?.on)).catch(() => {})
     backendConfig().then(async c => {
       if (gone || !c.strava) return
