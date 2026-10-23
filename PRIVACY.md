@@ -19,7 +19,9 @@ heart rate, HRV and sleep, and writes workouts, weigh-ins and food energy. Healt
 - is used only to show your training, recovery and calorie numbers in the app;
 - is never sent to the developer, never used for advertising or marketing, and never sold;
 - is not stored in Liftspark's backups or exports (only summaries such as a workout's average heart
-  rate are kept on the workout).
+  rate are kept on the workout);
+- is never copied to iCloud sync: weigh-ins and sessions imported from Health, and the heart-rate
+  and energy figures Health gives a workout, stay on the phone.
 
 ## Services you choose to use
 

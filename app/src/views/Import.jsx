@@ -158,7 +158,7 @@ function OtherApps() {
       <input ref={ref} type="file" accept=".csv,.xml,text/csv,text/xml" hidden onChange={e => { const f = e.target.files?.[0]; if (f) importFromApp(f); e.target.value = '' }} />
       <button className="ls-li" onClick={() => ref.current?.click()}><Icon name="download" /><span style={{ flex: 1, textAlign: 'start' }}><b>{t('Strong, Hevy, FitNotes or Gravl (CSV)')}</b><small className="ls-sub" style={{ display: 'block' }}>{t('Export a CSV from your old app and pick it here. Sets, weights and reps come across; days you already logged are left alone.')}</small></span><Icon name="chevronRight" /></button>
       <button className="ls-li" onClick={importFromHevy}><Icon name="key" /><span style={{ flex: 1, textAlign: 'start' }}><b>{t('Hevy, directly')}</b><small className="ls-sub" style={{ display: 'block' }}>{t('With a Hevy Pro API key: workouts, routines and weigh-ins.')}</small></span><Icon name="chevronRight" /></button>
-      <button className="ls-li" onClick={() => nav('/settings/data')}><Icon name="folder" /><span style={{ flex: 1, textAlign: 'start' }}><b>{t('Restore a Liftspark or openGym backup')}</b><small className="ls-sub" style={{ display: 'block' }}>{t('Settings → Data & backup → Import backup.')}</small></span><Icon name="chevronRight" /></button>
+      <button className="ls-li" onClick={() => nav('/settings/data')}><Icon name="folder" /><span style={{ flex: 1, textAlign: 'start' }}><b>{t('Restore a Liftspark backup')}</b><small className="ls-sub" style={{ display: 'block' }}>{t('Settings → Data & backup → Import backup.')}</small></span><Icon name="chevronRight" /></button>
     </div>
   </>
 }

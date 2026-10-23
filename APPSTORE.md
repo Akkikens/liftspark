@@ -56,6 +56,10 @@ Liftspark is open source (AGPL) and built on openGym by Duarte Santos.
   energy, all on the device. To test: Settings → Devices & Health → Sync with Apple Health.
 - **Bluetooth** is used only for heart-rate sensors (standard Heart Rate Service). To test without a
   strap, workouts run normally and show "Add live heart rate".
+- **iCloud sync (optional, off by default)** stores Liftspark's own records in the user's private
+  CloudKit database. Nothing read from HealthKit goes there (guideline 5.1.3): Health-imported
+  weigh-ins and sessions, Health-sourced daily values and the heart-rate/energy figures Health gave a
+  workout are excluded by `lib/ls-icloud.js` before upload.
 - **No login.**
 - **Background modes:** `bluetooth-central` keeps a paired heart-rate strap streaming while the
   phone is locked during a workout. `workout-processing` is for the optional iOS 26 iPhone workout

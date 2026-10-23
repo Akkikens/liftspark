@@ -27,15 +27,53 @@ export function hashOf(str) {
   return (h >>> 0).toString(36)
 }
 
+// What never goes to iCloud: anything that came from Apple Health. App Review 5.1.3 forbids storing
+// HealthKit data in iCloud, so weigh-ins and sessions imported from Health, Health-sourced daily
+// values and the heart-rate and energy figures Health gave a workout stay on this phone. A workout's
+// own sets, and the trace and numbers from a Bluetooth strap, sync as before.
+const HEALTH_LS = ['avgHr', 'maxHr', 'kcal', 'kcalSource', 'strain', 'trimp', 'zones', 'estimated', 'hr', 'n', 'source']
+
+/** The workout as it may be stored in iCloud, or null when it is a Health import. */
+export function cloudWorkout(w) {
+  if (w?.imported?.src === 'health') return null
+  const ls = w?.ls
+  if (!ls || typeof ls !== 'object') return w
+  if (ls.source === 'health') {
+    const kept = Object.fromEntries(Object.entries(ls).filter(([k]) => !HEALTH_LS.includes(k)))
+    return { ...w, ls: { ...kept, source: 'health' } }
+  }
+  if (ls.kcalSource === 'health') {
+    const { kcal, kcalSource, ...rest } = ls
+    return { ...w, ls: rest }
+  }
+  return w
+}
+
+/** The day's values without the ones Health supplied, or null when nothing else is left. */
+export function cloudDaily(rec) {
+  if (!rec || typeof rec !== 'object') return rec
+  const src = rec.src && typeof rec.src === 'object' ? rec.src : {}
+  const out = {}
+  let any = false
+  for (const [k, v] of Object.entries(rec)) {
+    if (k === 'src' || src[k] === 'health') continue
+    out[k] = v
+    any = true
+  }
+  if (!any) return null
+  out.src = Object.fromEntries(Object.entries(src).filter(([, s]) => s !== 'health'))
+  return out
+}
+
 /** The state as records: { id: { kind, value } }. */
 export function recordsOf(S) {
   const out = {}
-  for (const w of S.workouts || []) if (w?.id) out['workout:' + w.id] = { kind: 'workout', value: w }
+  for (const w of S.workouts || []) if (w?.id) { const v = cloudWorkout(w); if (v) out['workout:' + w.id] = { kind: 'workout', value: v } }
   for (const r of S.routines || []) if (r?.id) out['routine:' + r.id] = { kind: 'routine', value: r }
-  for (const b of S.bodyweight || []) if (b?.d) out['bw:' + b.d] = { kind: 'bw', value: b }
+  for (const b of S.bodyweight || []) if (b?.d && b.src !== 'health') out['bw:' + b.d] = { kind: 'bw', value: b }
   for (const [d, list] of Object.entries(S.food || {})) out['food:' + d] = { kind: 'food', value: list }
   for (const a of S.activities || []) if (a?.id) out['activity:' + a.id] = { kind: 'activity', value: a }
-  for (const [d, rec] of Object.entries(S.daily || {})) out['daily:' + d] = { kind: 'daily', value: rec }
+  for (const [d, rec] of Object.entries(S.daily || {})) { const v = cloudDaily(rec); if (v) out['daily:' + d] = { kind: 'daily', value: v } }
   out.prefs = { kind: 'prefs', value: Object.fromEntries(PREF_KEYS.filter(k => S[k] !== undefined).map(k => [k, S[k]])) }
   return out
 }
@@ -79,6 +117,9 @@ export function applyPulled(S, meta, records, deletes) {
   for (const r of records) {
     const local = m[r.id]
     if (local && !local.gone && local.at > r.updatedAt) continue   // our edit is newer; it gets pushed
+    // The copy this phone pushed comes back on the next pull: applying it would replace the local
+    // record with its iCloud version, which has the Health-sourced parts stripped out.
+    if (local && !local.gone && local.h === hashOf(r.json)) { m[r.id] = { h: local.h, at: Math.max(local.at, r.updatedAt) }; continue }
     let value
     try { value = JSON.parse(r.json) } catch { continue }
     put(r.id, r.kind, value)
