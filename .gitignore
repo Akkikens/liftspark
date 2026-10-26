@@ -13,3 +13,4 @@ app/ios/App/App/capacitor.config.json
 app/ios/App/App/config.xml
 DerivedData
 xcuserdata
+build/

@@ -63,8 +63,8 @@ Liftspark is open source (AGPL) and built on openGym by Duarte Santos.
   workout are excluded by `lib/ls-icloud.js` before upload.
 - **No login.**
 - **Background modes:** `bluetooth-central` keeps a paired heart-rate strap streaming while the
-  phone is locked during a workout. `workout-processing` is for the optional iOS 26 iPhone workout
-  session (the Watch app runs its own session and sends heart rate over WatchConnectivity).
+  phone is locked during a workout. The Apple Watch app declares `workout-processing` for its own
+  workout session and sends heart rate to the phone over WatchConnectivity.
 - **Privacy manifest:** PrivacyInfo.xcprivacy declares UserDefaults (CA92.1, the paired sensor) and
   file timestamps (C617.1, Capacitor Filesystem); no tracking, no collected data types.
 - **Strava** works through Apple Health; direct posting appears only when configured.
