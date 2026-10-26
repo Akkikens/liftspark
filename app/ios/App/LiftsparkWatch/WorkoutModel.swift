@@ -4,8 +4,8 @@ import WatchConnectivity
 import WatchKit
 
 /// The Watch side of a Liftspark workout. Runs an HKWorkoutSession (traditional strength training)
-/// with a live builder, streams heart rate to the phone over WatchConnectivity (and, on watchOS 10+,
-/// mirrors the session to the phone), shows the phone's current exercise and set, logs sets from
+/// with a live builder, streams heart rate to the phone over WatchConnectivity, shows the phone's
+/// current exercise and set, logs sets from
 /// the wrist, and buzzes when rest is over. The Watch saves the one HKWorkout; the phone is told so
 /// it doesn't save a second (message "saved").
 final class WorkoutModel: NSObject, ObservableObject {
@@ -28,6 +28,21 @@ final class WorkoutModel: NSObject, ObservableObject {
 
     override init() {
         super.init()
+        #if DEBUG
+        // App Store screenshots (`-shots`): a set in progress, as the phone would send it.
+        if ProcessInfo.processInfo.arguments.contains("-shots") {
+            running = true
+            exercise = "Barbell Full Squat"
+            setLabel = "Set 3 of 4"
+            weight = 195
+            reps = 8
+            unit = "lb"
+            bpm = 148
+            startedAt = Date().addingTimeInterval(-38 * 60)
+            restEnd = ProcessInfo.processInfo.arguments.contains("-rest") ? Date().addingTimeInterval(95) : nil
+            return
+        }
+        #endif
         if WCSession.isSupported() { WCSession.default.delegate = self; WCSession.default.activate() }
     }
 
