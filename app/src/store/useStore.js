@@ -1889,6 +1889,16 @@ export const useStore = create((set, get) => {
           finishBoot()
           return
         }
+        // App Store screenshot builds start from a seeded profile (VITE_SHOTS=1, never in a release).
+        if (import.meta.env.VITE_SHOTS === '1' && !hasData(get().S)) {
+          const { buildShotsState } = await import('../lib/shotsSeed.js')
+          persist(Object.assign(clone(DEF), buildShotsState()), false)
+          await get().chooseLocalMode()
+          get().setGuest(true)   // local, no account: the same state a phone reaches after onboarding
+          syncReminder(get().S)
+          finishBoot({ needsMobileOnboarding: false })
+          return
+        }
         const saved = await nativeLoad()
         const S = get().S
         if (saved && (!hasData(S) || (saved._ts || 0) >= (S._ts || 0))) {
