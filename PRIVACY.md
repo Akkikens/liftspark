@@ -27,10 +27,14 @@ heart rate, HRV and sleep, and writes workouts, weigh-ins and food energy. Healt
 
 - **Food search and barcodes** go to [Open Food Facts](https://world.openfoodfacts.org) (and, for
   generic foods, USDA FoodData Central). Only the search text or barcode is sent.
-- **Strava, WHOOP and Oura** are contacted only after you sign in to them. The sign-in passes
-  through Liftspark's small backend, which exchanges the one-time code for tokens and stores
-  nothing; the tokens are kept in your iPhone's Keychain. Data imported from WHOOP or Oura stays on
-  your phone.
+- **Strava, WHOOP and Oura sign-in**, when offered, contacts those services only after you sign in.
+  The sign-in passes through Liftspark's small backend, which exchanges the one-time code for tokens
+  and keeps no database; the tokens are kept in your iPhone's Keychain. Data imported from WHOOP or
+  Oura stays on your phone.
+- **Generic food search** goes through the same backend to USDA FoodData Central, so your search
+  text passes through it. Like any web service, the backend's host keeps short-lived request logs
+  that can include request addresses; nothing is stored beyond that.
+- **Hevy import** sends the Hevy API key you enter to Hevy, only to fetch your workout history.
 
 ## What the developer collects
 

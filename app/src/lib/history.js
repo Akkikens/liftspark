@@ -197,7 +197,7 @@ export function setLabel(id, s, cfg, speedUnit) {
     const partial = s.sides.L.done !== s.sides.R.done
     return ['L', 'R'].map(key => {
       const side = s.sides[key]
-      return `${t(key)} ${partial && !side.done ? '–' : oneSide(side) + effortTail(side)}`
+      return `${t(key)} ${partial && !side.done ? '-' : oneSide(side) + effortTail(side)}`
     }).join(' · ') + fail
   }
   // Bodyweight reads as what you did — "12", or "+10 × 12" once there is a belt involved —
@@ -218,7 +218,7 @@ export function defaultConfig(id, mode) {
 // reads as the range it is: "8–12". Printing the top alone made "Reps from 10, up to 15" read
 // as "2 × 15" in the plan and then open at 10. `fmt` formats each bound (a per-side split).
 const hasRange = cfg => cfg.repsMin > 0 && cfg.repsMin < cfg.reps
-const repsOf = (cfg, fmt = v => String(v)) => (hasRange(cfg) ? `${fmt(cfg.repsMin)}–${fmt(cfg.reps)}` : fmt(cfg.reps))
+const repsOf = (cfg, fmt = v => String(v)) => (hasRange(cfg) ? `${fmt(cfg.repsMin)}-${fmt(cfg.reps)}` : fmt(cfg.reps))
 
 /** "2 × 10", "3 × 8–12", "2 × 0:45": what a plan asks for per set, without its load. */
 export function setsRepsOf(cfg) {
@@ -228,7 +228,7 @@ export function setsRepsOf(cfg) {
   if (mode === 'time') return `${n} × ${fmtSec(cfg.sec || 45)}`
   if (isPyramid(cfg)) return pyramidLabel(cfg.pyramid)
   // Triple progression's set range reads as a range too: "3–5 × 8–12".
-  const sets = cfg.setsMax > n ? `${n}–${cfg.setsMax}` : n
+  const sets = cfg.setsMax > n ? `${n}-${cfg.setsMax}` : n
   return `${sets} × ${repsOf(cfg)}`
 }
 

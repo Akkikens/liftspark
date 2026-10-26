@@ -48,7 +48,7 @@ export default function HrDock() {
   return <div className="hr-dock" role="status" aria-live="off" aria-label={t('{0} beats per minute', bpm || 0)}>
     <svg className="heart" viewBox="0 0 24 24" style={fresh ? undefined : { animation: 'none', opacity: .45 }} aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.2C.8 8.2 3 4.5 6.7 4.5c2.1 0 3.6 1.1 5.3 3 1.7-1.9 3.2-3 5.3-3 3.7 0 5.9 3.7 4.3 7.3C19.5 16.4 12 21 12 21z" /></svg>
     <div>
-      <div className="bpm" style={fresh ? undefined : { color: 'var(--label-3)' }}>{bpm || '–'}</div>
+      <div className="bpm" style={fresh ? undefined : { color: 'var(--label-3)' }}>{bpm || '-'}</div>
       <div className="ls-sub">{source === 'ble' ? t('Sensor') : t('Watch')} · {t('bpm')}</div>
       {source === 'watch' && !fresh && <div className="ls-sub" style={{ maxWidth: 120 }}>{t('Start any workout on your Watch to stream live heart rate.')}</div>}
     </div>

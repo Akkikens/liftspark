@@ -55,7 +55,7 @@ export function readinessOf(daily, day) {
 }
 
 export const ADVICE = {
-  lighter: { title: 'Take it lighter today', body: 'One set fewer per exercise, and stop 2–3 reps short of failure. Training still counts; recovery catches up.' },
+  lighter: { title: 'Take it lighter today', body: 'One set fewer per exercise, and stop 2-3 reps short of failure. Training still counts; recovery catches up.' },
   standard: { title: 'Train as planned', body: 'Your body looks ready for the usual. Go by feel on the last sets.' },
   harder: { title: 'Good day to push', body: 'An extra set on your first two lifts, or chase a rep or weight PR.' },
 }

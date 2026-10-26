@@ -41,12 +41,12 @@ export default function TodayCard() {
         </Ring>
       </button>
       <div className="ls-grid2" style={{ flex: 1 }}>
-        <div><div className="ls-v" style={{ fontSize: 26 }}>{h.activeKcal != null ? Math.round(h.activeKcal) : '–'}</div><div className="ls-k">{t('Active kcal')}</div></div>
-        <div><div className="ls-v" style={{ fontSize: 26 }}>{h.steps != null ? Math.round(h.steps).toLocaleString() : '–'}</div><div className="ls-k">{t('Steps')}</div></div>
-        <div><div className="ls-v ls-spark-text" style={{ fontSize: 26 }}>{last?.ls?.strain ?? '–'}</div><div className="ls-k">{lastDay ? t('Strain · {0}', lastDay) : t('Last strain')}</div></div>
+        <div><div className="ls-v" style={{ fontSize: 26 }}>{h.activeKcal != null ? Math.round(h.activeKcal) : '-'}</div><div className="ls-k">{t('Active kcal')}</div></div>
+        <div><div className="ls-v" style={{ fontSize: 26 }}>{h.steps != null ? Math.round(h.steps).toLocaleString() : '-'}</div><div className="ls-k">{t('Steps')}</div></div>
+        <div><div className="ls-v ls-spark-text" style={{ fontSize: 26 }}>{last?.ls?.strain ?? '-'}</div><div className="ls-k">{lastDay ? t('Strain · {0}', lastDay) : t('Last strain')}</div></div>
         <div>{ready
-          ? <><div className="ls-v" style={{ fontSize: 26 }}>{ready.score ?? '–'}%</div><div className="ls-k">{ready.src} {ready.label}</div></>
-          : <><div className="ls-v" style={{ fontSize: 26 }}>{h.restingHr ? Math.round(h.restingHr) : '–'}</div><div className="ls-k">{t('Resting HR')}</div></>}</div>
+          ? <><div className="ls-v" style={{ fontSize: 26 }}>{ready.score ?? '-'}%</div><div className="ls-k">{ready.src} {ready.label}</div></>
+          : <><div className="ls-v" style={{ fontSize: 26 }}>{h.restingHr ? Math.round(h.restingHr) : '-'}</div><div className="ls-k">{t('Resting HR')}</div></>}</div>
       </div>
     </div>
     {h.activeKcal == null && <button className="ls-btn full" style={{ marginTop: 12 }} onClick={() => nav('/devices')}>{t('Connect Apple Health & heart rate')}</button>}

@@ -76,7 +76,7 @@ export function stravaCaption(w, S) {
     if (!done.length) continue
     const best = done.reduce((a, s) => ((s.w || 0) > (a.w || 0) ? s : a), done[0])
     const name = cap(exerciseNameFor(EXIDX[e.id] || e) || e.name || 'Exercise')
-    lines.push(`• ${name}: ${done.length}×${best.r || best.reps || '–'}${best.w > 0 ? ` @ ${best.w} ${unit}` : ''}`)
+    lines.push(`• ${name}: ${done.length}×${best.r || best.reps || '-'}${best.w > 0 ? ` @ ${best.w} ${unit}` : ''}`)
   }
   lines.push('')
   lines.push('Logged with Liftspark')

@@ -396,7 +396,7 @@ public class HealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
     private func stopLive() {
         if let q = liveQuery { store.stop(q); liveQuery = nil }
         if #available(iOS 26.0, *), let s = session as? HKWorkoutSession, let b = builder as? HKLiveWorkoutBuilder {
-            s.end()
+            if s.state != .ended && s.state != .stopped { s.end() }
             // Liftspark writes the workout itself (write(), with sets in the notes); the live
             // builder only streamed heart rate, so its own copy is thrown away.
             b.endCollection(withEnd: Date()) { _, _ in b.discardWorkout() }

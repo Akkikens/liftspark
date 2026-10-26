@@ -28,7 +28,7 @@ export default function StrainTrend({ workouts }) {
       <div className="ls-bars" role="img" aria-label={t('Average strain {0} over {1} training days', avg.toFixed(1), trained.length)}>
         {rows.map(r => <span key={r.d} title={`${r.d}: ${r.v}`} style={{ height: Math.max(3, r.v / 21 * 100) + '%', opacity: r.v ? 1 : .25 }} />)}
       </div>
-      <div className="ls-sub" style={{ marginTop: 8 }}>{t('Average {0} on {1} training days · scale 0–21', avg.toFixed(1), trained.length)}</div>
+      <div className="ls-sub" style={{ marginTop: 8 }}>{t('Average {0} on {1} training days · scale 0-21', avg.toFixed(1), trained.length)}</div>
     </> : <div className="ls-sub">{t('Finish a workout to see your strain here.')}</div>}
   </div>
 }

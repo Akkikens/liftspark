@@ -53,7 +53,6 @@ final class WorkoutModel: NSObject, ObservableObject {
             let now = Date()
             s.startActivity(with: now)
             b.beginCollection(withStart: now) { _, _ in }
-            if #available(watchOS 10.0, *) { s.startMirroringToCompanionDevice { _, _ in } }
             DispatchQueue.main.async { self.running = true; self.startedAt = now }
             if !fromPhone { send(["type": "start", "at": now.timeIntervalSince1970 * 1000]) }
         } catch {

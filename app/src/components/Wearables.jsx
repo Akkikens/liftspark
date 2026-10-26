@@ -16,9 +16,9 @@ import Icon from './Icon.jsx'
 
 export const KINDS = [
   { id: 'watch', name: 'Apple Watch', sub: 'Heart rate, workouts and calories through Apple Health', glyph: 'watch' },
-  { id: 'whoop', name: 'WHOOP', sub: 'Live heart rate by Broadcast; recovery and sleep by sign-in', glyph: 'band' },
+  { id: 'whoop', name: 'WHOOP', sub: 'Live heart rate by Broadcast; recovery and sleep through Apple Health', glyph: 'band' },
   { id: 'garmin', name: 'Garmin', sub: 'Live heart rate by Broadcast; history through Apple Health', glyph: 'watch' },
-  { id: 'oura', name: 'Oura', sub: 'Sleep, readiness and resting heart rate', glyph: 'ring' },
+  { id: 'oura', name: 'Oura', sub: 'Sleep and resting heart rate through Apple Health', glyph: 'ring' },
   { id: 'strap', name: 'Heart-rate strap', sub: 'Polar, Wahoo, Coros, Garmin HRM and any Bluetooth sensor', glyph: 'strap' },
 ]
 const KIND = Object.fromEntries(KINDS.map(k => [k.id, k]))

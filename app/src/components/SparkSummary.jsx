@@ -81,8 +81,8 @@ export default function SparkSummary({ w }) {
       <div className="ls-grid2" style={{ flex: 1 }}>
         <div><div className="ls-v">{ls.minutes}<small>{t('min')}</small></div><div className="ls-k">{t('Time')}</div></div>
         <div><div className="ls-v">{ls.kcal}<small>kcal</small></div><div className="ls-k">{ls.kcalSource === 'health' ? t('From Health') : ls.kcalSource === 'hr' ? t('From heart rate') : t('Estimated')}</div></div>
-        <div><div className="ls-v">{ls.avgHr || '–'}</div><div className="ls-k">{t('Avg bpm')}</div></div>
-        <div><div className="ls-v">{ls.maxHr || '–'}</div><div className="ls-k">{t('Max bpm')}</div></div>
+        <div><div className="ls-v">{ls.avgHr || '-'}</div><div className="ls-k">{t('Avg bpm')}</div></div>
+        <div><div className="ls-v">{ls.maxHr || '-'}</div><div className="ls-k">{t('Max bpm')}</div></div>
       </div>
     </div>
 

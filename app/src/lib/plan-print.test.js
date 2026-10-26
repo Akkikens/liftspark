@@ -84,7 +84,7 @@ describe('planPrintHTML prints the exercise as it is prescribed', () => {
 
   it('keeps the rep range and names the intensifier', () => {
     const body = text(planPrintHTML(S2, '', { routineId: 'r' }))
-    expect(body).toContain('3 × 8–12 · 60 kg · Drop-set 2× −20%')
+    expect(body).toContain('3 × 8-12 · 60 kg · Drop-set 2× −20%')
     expect(body).toContain('1 × 8 · 40 kg · Rest-pause 20 reps')
   })
 

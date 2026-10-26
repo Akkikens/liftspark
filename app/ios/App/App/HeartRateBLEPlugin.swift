@@ -161,7 +161,7 @@ public class HeartRateBLEPlugin: CAPPlugin, CAPBridgedPlugin, CBCentralManagerDe
     }
 
     public func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-        retryLater(peripheral)
+        if autoReconnect { retryLater(peripheral) } else { self.peripheral = nil; setState("idle") }
     }
 
     public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {

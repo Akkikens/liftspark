@@ -210,9 +210,9 @@ describe('triple progression keeps the rules every policy follows', () => {
 describe('triple progression in the plan around it', () => {
   it('reads its set range on the routine line', async () => {
     const { setsRepsOf, exLine } = await import('./history.js')
-    expect(setsRepsOf(cfg)).toBe('3–5 × 8–12')
-    expect(exLine(cfg, 'kg')).toBe('3–5 × 8–12 · 60 kg')
-    expect(setsRepsOf({ ...cfg, setsMax: undefined })).toBe('3 × 8–12')
+    expect(setsRepsOf(cfg)).toBe('3-5 × 8-12')
+    expect(exLine(cfg, 'kg')).toBe('3-5 × 8-12 · 60 kg')
+    expect(setsRepsOf({ ...cfg, setsMax: undefined })).toBe('3 × 8-12')
   })
 
   it('travels with a shared plan', async () => {

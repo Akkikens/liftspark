@@ -49,8 +49,8 @@ struct TodayWidgetView: View {
                 Text("\(s.streakWeeks)").font(.system(size: 40, weight: .heavy, design: .rounded)).foregroundStyle(chalk)
                     + Text(" wk streak").font(.caption.weight(.semibold)).foregroundStyle(chalk.opacity(0.6))
                 HStack(spacing: 14) {
-                    stat(s.lastStrain.map { String(format: "%.1f", $0) } ?? "–", "strain")
-                    stat(s.kcalLeft.map { "\($0)" } ?? "–", "kcal left")
+                    stat(s.lastStrain.map { String(format: "%.1f", $0) } ?? "-", "strain")
+                    stat(s.kcalLeft.map { "\($0)" } ?? "-", "kcal left")
                 }
                 if family != .systemSmall, let n = s.nextWorkout {
                     Text("Next: \(n)").font(.caption.weight(.semibold)).foregroundStyle(chalk.opacity(0.8))
@@ -156,7 +156,7 @@ struct HeartView: View {
         VStack(spacing: 0) {
             HStack(spacing: 3) {
                 Image(systemName: "heart.fill").foregroundStyle(color).font(big ? .body : .caption2)
-                Text(state.bpm.map { "\($0)" } ?? "–").font(big ? .system(size: 28, weight: .heavy, design: .rounded) : .caption2.weight(.bold)).monospacedDigit()
+                Text(state.bpm.map { "\($0)" } ?? "-").font(big ? .system(size: 28, weight: .heavy, design: .rounded) : .caption2.weight(.bold)).monospacedDigit()
             }
             if big, let z = state.zone { Text("Zone \(z)").font(.caption2.weight(.semibold)).foregroundStyle(color) }
         }

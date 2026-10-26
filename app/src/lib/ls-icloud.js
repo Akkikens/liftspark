@@ -38,9 +38,10 @@ export function cloudWorkout(w) {
   if (w?.imported?.src === 'health') return null
   const ls = w?.ls
   if (!ls || typeof ls !== 'object') return w
-  if (ls.source === 'health') {
+  // Watch heart rate arrives through HealthKit, so it counts as Health data (guideline 5.1.3).
+  if (ls.source === 'health' || ls.source === 'watch') {
     const kept = Object.fromEntries(Object.entries(ls).filter(([k]) => !HEALTH_LS.includes(k)))
-    return { ...w, ls: { ...kept, source: 'health' } }
+    return { ...w, ls: { ...kept, source: ls.source } }
   }
   if (ls.kcalSource === 'health') {
     const { kcal, kcalSource, ...rest } = ls

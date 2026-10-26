@@ -52,6 +52,9 @@ describe('iCloud sync keeps Apple Health data on the phone', () => {
     const mixed = { id: 'w3', d: '2026-10-01', ls: { minutes: 40, strain: 9, avgHr: 130, kcal: 400, kcalSource: 'health', hr: [[1, 120]], source: 'ble' } }
     expect(cloudWorkout(mixed).ls).toEqual({ minutes: 40, strain: 9, avgHr: 130, hr: [[1, 120]], source: 'ble' })
     expect(cloudWorkout({ id: 'w4', d: '2026-10-01' })).toEqual({ id: 'w4', d: '2026-10-01' })
+    // Apple Watch heart rate is read through HealthKit, so it is stripped the same way.
+    const watch = { id: 'w5', d: '2026-10-01', ls: { minutes: 40, strain: 9, avgHr: 130, maxHr: 170, kcal: 400, zones: [1, 2, 3, 4, 5], hr: [[1, 120]], n: 300, source: 'watch', muscles: ['chest'] } }
+    expect(cloudWorkout(watch).ls).toEqual({ minutes: 40, muscles: ['chest'], source: 'watch' })
   })
 
   it('does not replace a local workout with its own stripped iCloud copy', () => {

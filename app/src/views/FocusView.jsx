@@ -66,12 +66,12 @@ const addBurstTo = (row, restSec) => {
 
 function Prescription({ entry, setIdx, unit, fallbackRest, children }) {
   const target = entry.target || {}
-  const reps = target.repsMin > 0 ? `${target.repsMin}–${target.reps}` : target.reps > 0 ? String(target.reps) : ''
+  const reps = target.repsMin > 0 ? `${target.repsMin}-${target.reps}` : target.reps > 0 ? String(target.reps) : ''
   const load = target.weight > 0
-    ? `@ ${fmtNum(target.weight)}${target.weightMax > target.weight ? `–${fmtNum(target.weightMax)}` : ''} ${unit}`
+    ? `@ ${fmtNum(target.weight)}${target.weightMax > target.weight ? `-${fmtNum(target.weightMax)}` : ''} ${unit}`
     : ''
   const rpe = target.rpeMin > 0
-    ? `RPE ${fmtNum(target.rpeMin)}${target.rpeMax > target.rpeMin ? `–${fmtNum(target.rpeMax)}` : ''}`
+    ? `RPE ${fmtNum(target.rpeMin)}${target.rpeMax > target.rpeMin ? `-${fmtNum(target.rpeMax)}` : ''}`
     : ''
   const rest = target.restSec > 0 ? `Rest ${target.restSec}s` : fallbackRest > 0 ? `Rest ${fallbackRest}s` : ''
   const badges = [reps && `${reps} Reps`, load, rpe, rest, target.tempo].filter(Boolean)
@@ -102,7 +102,7 @@ function PlateBadge({ S, entry, set }) {
   if (!load) return null
   const stack = load.plates.map(fmtPlate).join(' + ')
   const text = load.barOnly ? t('Bar only')
-    : load.kind === 'pairs' ? t('{0} per side', stack || '–') : t('Load {0}', stack || '–')
+    : load.kind === 'pairs' ? t('{0} per side', stack || '-') : t('Load {0}', stack || '-')
   return <span className="focus-badge plate"><Icon name="plate" />{text}{load.missing > 0 && <> · <span className="short">{t('{0} short', fmtPlate(load.missing) + ' ' + S.unit)}</span></>}</span>
 }
 

@@ -17,7 +17,7 @@
 Lift with a plan, see every rep's effort, and keep your calories honest.
 
 Liftspark guides your workouts set by set, with progression that adds weight when you're ready.
-Connect your Apple Watch, a chest strap, WHOOP or Garmin (heart-rate broadcast) and watch your live
+Connect your Apple Watch or any Bluetooth heart-rate strap (or a watch that broadcasts heart rate) and watch your live
 heart rate and zones while you train. Every session gets a strain score, time in zones and the
 calories it burned.
 
@@ -29,8 +29,8 @@ Workouts, weigh-ins and food go to Apple Health; Strava imports your workouts fr
 card with the muscles you worked and your stats straight to your post.
 
 WEARABLES
-Apple Watch, WHOOP, Garmin, Polar, Wahoo and any Bluetooth heart-rate strap. WHOOP recovery and
-Oura readiness on your home screen.
+Apple Watch, plus any Bluetooth heart-rate strap or watch that broadcasts heart rate, such as Polar,
+Wahoo and Garmin. Sleep and resting heart rate from other wearables come in through Apple Health.
 
 PRIVATE
 No account. Your training data stays on your phone.
@@ -42,13 +42,14 @@ Liftspark is open source (AGPL) and built on openGym by Duarte Santos.
 - **Health & Fitness:** heart rate, workouts, active energy, body weight, dietary energy.
   - Read from and written to Apple Health on the device only.
   - Not collected by the developer, not linked to the user, not used for tracking.
-  - **HealthKit data is never used for advertising or sold**, and never leaves the device except to
-    Strava/WHOOP/Oura when the user connects them.
+  - **HealthKit data is never used for advertising or sold**, and never leaves the device. Strava
+    gets workouts through Apple Health itself, not from Liftspark.
 - **Data not collected:** no analytics, no account, no ads SDK.
 - **Third parties:**
-  - Food searches go to Open Food Facts.
-  - Optional Strava/WHOOP/Oura sign-in goes through Liftspark's backend, which only exchanges
-    OAuth codes for tokens and stores nothing.
+  - Food searches go to Open Food Facts (real time, nothing retained).
+  - Strava, WHOOP and Oura sign-in is hidden in 1.0: the backend that exchanges OAuth codes is not
+    deployed, and the app only shows integrations the backend reports as configured.
+  - Hevy import (optional) sends the user's own Hevy API key to Hevy's API to fetch their history.
 
 ## Review notes
 
@@ -63,7 +64,7 @@ Liftspark is open source (AGPL) and built on openGym by Duarte Santos.
 - **No login.**
 - **Background modes:** `bluetooth-central` keeps a paired heart-rate strap streaming while the
   phone is locked during a workout. `workout-processing` is for the optional iOS 26 iPhone workout
-  session and the Apple Watch app's mirrored session; drop it if the Watch app doesn't ship.
+  session (the Watch app runs its own session and sends heart rate over WatchConnectivity).
 - **Privacy manifest:** PrivacyInfo.xcprivacy declares UserDefaults (CA92.1, the paired sensor) and
   file timestamps (C617.1, Capacitor Filesystem); no tracking, no collected data types.
 - **Strava** works through Apple Health; direct posting appears only when configured.

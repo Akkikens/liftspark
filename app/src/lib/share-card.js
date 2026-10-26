@@ -77,10 +77,10 @@ export async function renderShareCard(w, S) {
 
   // Stats row.
   const stats = [
-    [ls.minutes ? `${ls.minutes}` : '–', 'min'],
-    [ls.kcal ? `${ls.kcal}` : '–', 'kcal'],
-    [ls.avgHr ? `${ls.avgHr}` : '–', 'avg bpm'],
-    [ls.maxHr ? `${ls.maxHr}` : '–', 'max bpm'],
+    [ls.minutes ? `${ls.minutes}` : '-', 'min'],
+    [ls.kcal ? `${ls.kcal}` : '-', 'kcal'],
+    [ls.avgHr ? `${ls.avgHr}` : '-', 'avg bpm'],
+    [ls.maxHr ? `${ls.maxHr}` : '-', 'max bpm'],
   ]
   stats.forEach(([v, k], i) => {
     const x = 72 + i * 240

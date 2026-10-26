@@ -45,7 +45,10 @@
 		AA010000000000000000003B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = AA010000000000000000003A /* PrivacyInfo.xcprivacy */; };
 		B7FCD932D674326870039013 /* LiftsparkWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AE0A711EA23C8CD306AFCDD4 /* LiftsparkWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B943510F6907B0686E5076F7 /* LiftsparkWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = E198C4C4216DC546D5D37E6F /* LiftsparkWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BB21BEFCD78BC448A1E6BEC1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 979C2AA10D176D5507813656 /* Assets.xcassets */; };
+		D1304091D77DAA8AC14AFA6B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4ED7F3DE45491307D612FCA1 /* PrivacyInfo.xcprivacy */; };
 		D50E774B5CF20220B7172F7C /* CloudSyncPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE02A9048A5592A7E3C2DE62 /* CloudSyncPlugin.swift */; };
+		DC6FC75245EC44CDBC2B66D5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D47DB0D40B4DFE4A743DA786 /* PrivacyInfo.xcprivacy */; };
 		ED99DB677C279083327D496B /* ActivityKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7310A8F908B8E01A212034F0 /* ActivityKit.framework */; };
 		FF9E60F59B24650D3EF5D759 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C71DB599E335206984AD992 /* WatchConnectivity.framework */; };
 /* End PBXBuildFile section */
@@ -99,6 +102,7 @@
 		2838B411DF1A5A36B84BC1A1 /* WorkoutModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WorkoutModel.swift; sourceTree = "<group>"; };
 		2FAD9762203C412B000D30F8 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
 		31E92AD0E1E66EDD7ECF8573 /* LiftsparkWatchApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LiftsparkWatchApp.swift; sourceTree = "<group>"; };
+		4ED7F3DE45491307D612FCA1 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		50379B222058CBB4000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
 		504EC3041FED79650016851F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		504EC3071FED79650016851F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -114,6 +118,7 @@
 		85BE423D4D64CC47E4BA7B62 /* LiftsparkWatch.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = LiftsparkWatch.entitlements; sourceTree = "<group>"; };
 		8A2815BB7BC17D2E8C8D8392 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS26.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		8B969E4C611A21D6E3C5C528 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS26.0.sdk/System/Library/Frameworks/HealthKit.framework; sourceTree = DEVELOPER_DIR; };
+		979C2AA10D176D5507813656 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9AA3C3DE9BF10753B2986022 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		AA0000000000000000000001 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		AA0100000000000000000001 /* PrintPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrintPlugin.swift; sourceTree = "<group>"; };
@@ -133,6 +138,7 @@
 		C21491D32D2DF9B78C7FB255 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/WidgetKit.framework; sourceTree = DEVELOPER_DIR; };
 		CE67869F8665DFC09C232477 /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		CE99C062EA587381EBB5A8D4 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D47DB0D40B4DFE4A743DA786 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		DDC9370FB962479703EA0EE5 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
 		E131C434237BF8471ABC6845 /* WatchPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchPlugin.swift; sourceTree = "<group>"; };
 		E198C4C4216DC546D5D37E6F /* LiftsparkWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiftsparkWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -205,6 +211,7 @@
 				04727DC3CD88349EFD52748E /* LiftsparkWidgets.swift */,
 				CE99C062EA587381EBB5A8D4 /* Info.plist */,
 				03B7AE46B10FA34668796EA7 /* LiftsparkWidgets.entitlements */,
+				D47DB0D40B4DFE4A743DA786 /* PrivacyInfo.xcprivacy */,
 			);
 			name = LiftsparkWidgets;
 			path = LiftsparkWidgets;
@@ -303,6 +310,8 @@
 				CE67869F8665DFC09C232477 /* ContentView.swift */,
 				507DDA8E2CA3FC37EEA09D2F /* Info.plist */,
 				85BE423D4D64CC47E4BA7B62 /* LiftsparkWatch.entitlements */,
+				979C2AA10D176D5507813656 /* Assets.xcassets */,
+				4ED7F3DE45491307D612FCA1 /* PrivacyInfo.xcprivacy */,
 			);
 			name = LiftsparkWatch;
 			path = LiftsparkWatch;
@@ -409,6 +418,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DC6FC75245EC44CDBC2B66D5 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -416,6 +426,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB21BEFCD78BC448A1E6BEC1 /* Assets.xcassets in Resources */,
+				D1304091D77DAA8AC14AFA6B /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -601,7 +613,7 @@
 		40EEADAAFB2195A46B1D8B61 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = LiftsparkWatch/LiftsparkWatch.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -775,7 +787,7 @@
 		B3380E1FD1EB4316880D72B7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = LiftsparkWatch/LiftsparkWatch.entitlements;
 				CODE_SIGN_STYLE = Automatic;

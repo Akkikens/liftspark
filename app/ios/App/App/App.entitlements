@@ -18,7 +18,5 @@
 	<array>
 		<string>CloudKit</string>
 	</array>
-	<key>aps-environment</key>
-	<string>development</string>
 </dict>
 </plist>

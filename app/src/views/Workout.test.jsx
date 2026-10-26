@@ -1219,7 +1219,7 @@ describe('saving progression settings unchanged', () => {
     expect(after.plan.kind).toBe('up')
     expect(after.planned).toEqual(before.planned)
     expect(after.target).toMatchObject({ weight: 42.5, reps: 8, repsMin: 8 })
-    expect(container.querySelector('.planline')?.textContent).toBe('Plan: 3 × 8–12')
+    expect(container.querySelector('.planline')?.textContent).toBe('Plan: 3 × 8-12')
     const following = next(st)
     expect(following.plan.why[0]).not.toBe('Plan changed, so starting from your new target.')
     expect(rows(following)).toEqual([[42.5, 9], [42.5, 9], [42.5, 9]])
@@ -1561,7 +1561,7 @@ describe('workout focus view', () => {
     expect(container.querySelector('[data-testid="focus-view"]')).toBeTruthy()
     expect(container.querySelectorAll('[data-testid="focus-set"]').length).toBe(1)
     expect(container.textContent).toContain('2/3')
-    expect(container.textContent).toContain('3–5 Reps')
+    expect(container.textContent).toContain('3-5 Reps')
     expect(container.textContent).toContain('@ 60 kg')
     expect(container.textContent).toContain('Rest 120s')
     expect(buttonNamed('Previous set').disabled).toBe(false)
@@ -2302,7 +2302,7 @@ describe('the plan line', () => {
 
   it('reads a double-progression aim inside the range as the plan', async () => {
     await mount([planned({ planned: { sets: 3, reps: 12, repsMin: 8, weight: 40 }, target: { mode: 'reps', sets: 3, reps: 11, repsMin: 8, weight: 40 } })])
-    expect(line()).toBe('Plan: 3 × 8–12')
+    expect(line()).toBe('Plan: 3 × 8-12')
   })
 
   it('stays in compact view, where the last-time recap and progression line go', async () => {

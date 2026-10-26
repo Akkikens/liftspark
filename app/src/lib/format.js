@@ -25,7 +25,7 @@ export function fmtDateRange(from, to, long, now = new Date()) {
   const last = to || from
   const year = String(now.getFullYear())
   const withYear = from.slice(0, 4) !== last.slice(0, 4) || from.slice(0, 4) !== year
-  return from === last ? fmtDate(from, long, withYear) : fmtDate(from, long, withYear) + ' – ' + fmtDate(last, long, withYear)
+  return from === last ? fmtDate(from, long, withYear) : fmtDate(from, long, withYear) + ' - ' + fmtDate(last, long, withYear)
 }
 // In the UI language: the Latin h, m and min stood inside Arabic and Ukrainian rows.
 export function fmtDur(ms) {

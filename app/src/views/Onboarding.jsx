@@ -228,7 +228,7 @@ function Place({ a, save, next, update }) {
 
 function Sex({ a, save, next }) {
   return <Q kicker={t('About you')} title={t('Which formula should we use?')}
-    sub={t('Resting calorie burn is estimated with the Mifflin–St Jeor equation, which has a version for male and female bodies. Prefer not to say and we use the average of both, which is within a few percent.')}>
+    sub={t('Resting calorie burn is estimated with the Mifflin-St Jeor equation, which has a version for male and female bodies. Prefer not to say and we use the average of both, which is within a few percent.')}>
     <Choices label={t('Sex for calorie formulas')} options={SEX_OPTS.map(([id, l]) => [id, l])} value={a.sex}
       onPick={sex => { save({ sex }, s => { s.lsProfile = { ...(s.lsProfile || {}), sex: sex === 'other' ? null : sex } }); setTimeout(next, 180) }} />
   </Q>

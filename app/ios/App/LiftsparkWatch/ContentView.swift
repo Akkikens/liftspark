@@ -46,7 +46,7 @@ struct WorkoutView: View {
             VStack(spacing: 6) {
                 HStack(spacing: 4) {
                     Image(systemName: "heart.fill").foregroundStyle(.red)
-                    Text(m.bpm.map { "\($0)" } ?? "–").font(.system(size: 40, weight: .heavy, design: .rounded)).monospacedDigit()
+                    Text(m.bpm.map { "\($0)" } ?? "-").font(.system(size: 40, weight: .heavy, design: .rounded)).monospacedDigit()
                 }
                 if let end = m.restEnd, end > .now {
                     Text("Rest").font(.caption).foregroundStyle(.secondary)

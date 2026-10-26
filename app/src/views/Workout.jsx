@@ -379,7 +379,7 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
     // "+" between plates: "45 + 5 per side" reads as a sum, a dot did not (Boris, 2026-09-13).
     const stack = L.plates.map(w => fmtPlate(w)).join(' + ')
     const text = L.barOnly ? t('Bar only')
-      : L.kind === 'pairs' ? t('{0} per side', stack || '–') : t('Load {0}', stack || '–')
+      : L.kind === 'pairs' ? t('{0} per side', stack || '-') : t('Load {0}', stack || '-')
     const d = prev && !dense ? plateDelta(prev.plates, L.plates) : null
     const moves = d ? [...d.strip.map(w => '−' + fmtPlate(w)), ...d.add.map(w => '+' + fmtPlate(w))] : []
     return <div className="plateline">
@@ -1950,7 +1950,7 @@ function ActiveWorkout() {
     </div>
     {!editing && !A.backfill && <HrDock />}
     {!editing && A.lsReadiness && <div className="ls-note ls-ready-note" role="note">
-      {A.lsReadiness === 'lighter' ? t('Lighter session from your readiness: one set fewer per exercise, stop 2–3 reps short of failure.') : t('Good recovery: an extra set on your first two lifts.')}
+      {A.lsReadiness === 'lighter' ? t('Lighter session from your readiness: one set fewer per exercise, stop 2-3 reps short of failure.') : t('Good recovery: an extra set on your first two lifts.')}
     </div>}
     {editing && <p className="muted small">{t('Editing a saved workout. Date and duration stay unchanged.')}</p>}
     {A.backfill && <div className="muted small" style={{ marginBottom: 8 }}>{t('Logging a past workout, so no rest timers.')}</div>}
